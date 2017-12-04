@@ -1,3 +1,4 @@
 DaminoSystemsv4/__pycache__/
 dynamic_schemas/__pycache__/
 *.pyc
+db.sqlite3
