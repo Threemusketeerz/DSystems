@@ -49,7 +49,7 @@ class SchemaResponse(models.Model):
     pub_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.qa_set
+        return self.id
 
     def get_questions(self):
         return SchemaQuestion.objects.filter(schema=self.schema)
