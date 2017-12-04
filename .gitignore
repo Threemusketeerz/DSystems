@@ -3,5 +3,4 @@ dynamic_schemas/__pycache__/
 *.pyc
 db.sqlite3
 *.swp
-dynamic_schemas/__pycache__/
 dynamic_schemas/*.swp
