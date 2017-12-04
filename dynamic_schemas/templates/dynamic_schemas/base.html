@@ -1,0 +1,25 @@
+<html>
+    <head>
+       	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+		<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="form-container">
+            <form action="" method="POST" >
+                {% csrf_token %}
+                {% if form %}
+                {% for field in form %} 
+                {% if not field.is_hidden %} 
+                {{ field.label_tag }}
+                {{ field }}
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+                <input type="submit" class="btn btn-primary"/>
+            </form>
+        </div>
+        <div class="content-container">
+            {% block content %}
+            {% endblock %}
+    </body> 
+</html>
