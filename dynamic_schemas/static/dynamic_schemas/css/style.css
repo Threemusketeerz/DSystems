@@ -1,0 +1,14 @@
+body {
+    background-color: rgb(244, 248, 255);
+}
+
+.form-box {
+    padding: 50px; margin: 100px 200px;
+    background-color: rgb(255, 255, 255);
+}
+
+.header {
+    color: white;
+    background-color: #337AB7;
+}
+

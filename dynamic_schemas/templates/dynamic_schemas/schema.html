@@ -2,20 +2,26 @@
 {% load dynamic_schema_extras %}
 
 {% block content %}
-{{ single_response.fields.items }}
+<div class="topnav">
+    <ul>
+        <li>
+            <a href="{% url 'dynamic_schemas:create_form' pk=pk %}">Ny Indtastning</a>
+        </li>
+    </ul>
+</div>
 <div class="dataTables-container">
-    <table id="dataTable" class="display" cellspacing="0" width="100%">
+    <table id="dataTable" class="display table table-striped" cellspacing="0" width="100%">
         <thead>
             <tr>
                 {% for h, r in single_response.items %}
                     {% if h == 'id' %}
                     <th>
-                        {{ h }}
+						ID
                     </th>
                     {% endif %}
                     {% if h == 'pub_date' %}
                     <th>
-                        {{ h }}
+						Dato
                     </th>
                     {% endif %}
                     {% if h == 'qa_set' %}

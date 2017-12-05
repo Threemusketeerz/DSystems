@@ -9,22 +9,25 @@ $(document).ready(function() {
     var dataFileName= "responses/";
     var columnsFileName = "columns/";
     //edit .getJSON to fit needs.
-    columnsFile = $.getJSON(columnsFileName, function(data){ console.log(data); return data; });
+    //columnsFile = $.getJSON(columnsFileName, function(data){ console.log(data); return data; });
     
-    dataFile = $.getJSON(dataFileName, function(data){ console.log(data); return data.responseJSON; });
+    //dataFile = $.getJSON(dataFileName, function(data){ console.log(data); return data.responseJSON; });
 
     // This promise function, makes sure that the json files are loaded in
     // before anything.
     // What would happen without is an error, where it didn't fetch either
     // columns or data before rendering the table.
-    $.when(dataFile).done(function(dataFile){
+    //$('#dataTable').DataTable();
+    $.when().done(function(){
         console.log(performance.now() + ' TableCreation started');
-        console.log('t, ',dataFile.length);
+
 
         //$(".field input").addClass("form-control") 
 
         var table = $("#dataTable").DataTable({
-            "data": dataFile,
+            //"data": dataFile,
+			"serverside": true,
+			"processing": true,
             "columnDefs": [{
                 // Renders glyphicons if boolean true or false.
                 "render": function(data, type, row, meta){
@@ -40,8 +43,8 @@ $(document).ready(function() {
                 // Checks all targets
                 "targets": "_all"
             }], 
-            "columns": columnsFile[0],
-            "order": [[ columnsFile[0].length-1, 'desc' ]],
+            //"columns": columnsFile[0],
+            //"order": [[ columnsFile[0].length-1, 'desc' ]],
             "lengthMenu": [20],
             // Responsive design for phones.
             "responsive": {
@@ -84,14 +87,14 @@ $(document).ready(function() {
                 }
             }]
         })
-        //table.on( 'select', function ( e, dt, type, indexes ) {
-            //console.log(type, indexes);
-            //if ( type === 'row' ) {
-                //var data = table.rows( indexes ).data();
-                //console.log(data[0])
-                //// do something with the ID of the selected items
-            //}
-        //} );
+        table.on( 'select', function ( e, dt, type, indexes ) {
+            console.log(type, indexes);
+            if ( type === 'row' ) {
+                var data = table.rows( indexes ).data();
+                console.log(data[0])
+                // do something with the ID of the selected items
+            }
+        } );
     }).done(function() {
         console.log(performance.now() + ' TableCreation done')
         //var end = performance.now();

@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views.generic import ListView 
 
 from rest_framework import status
@@ -20,13 +20,13 @@ class SchemaIndexView(ListView):
         return Schema.objects.all()
 
 
-class SchemaView(ListView):
-    template_name = 'dynamic_schemas/schema.html'
-    context_object_name = 'schema'
+# class SchemaView(ListView):
+    # template_name = 'dynamic_schemas/schema.html'
+    # context_object_name = 'schema'
 
-    def get_queryset(self, *args, **kwargs):
-        schema_instance = Schema.objects.get(pk=self.kwargs['pk'])
-        return SchemaQuestion.objects.filter(rel_schema=schema_instance)
+    # def get_queryset(self, *args, **kwargs):
+        # schema_instance = Schema.objects.get(pk=self.kwargs['pk'])
+        # return SchemaQuestion.objects.filter(rel_schema=schema_instance)
 
 
 def form_view(request, pk):
@@ -35,20 +35,18 @@ def form_view(request, pk):
     if request.method == 'POST':
         form = SchemaResponseForm(schema, request.POST)
 
-        if form.is_consistent():
+        if form.is_valid():
+            # This removes schema from qa_set only.
+            del form.cleaned_data['schema']
+
             form.save()
             
-            return redirect('success/', pk=pk)
-
-
+            return redirect(f'/dynamic_schemas/{pk}')
     else:
         form = SchemaResponseForm(schema)
 
-    return render(request, 'dynamic_schemas/schema.html', {'form': form})
+    return render(request, f'dynamic_schemas/create.html', {'form': form})
 
-
-def success_view(request, pk):
-    return redirect(f'/dynamic_schemas/{pk}/')
 
 
 """ API Views """
@@ -66,7 +64,7 @@ class ResponseList(APIView):
         return Response(serializer.data)
 
 
-class ResponseSingle(APIView):
+class SchemaView(APIView):
 
     """
     Fetches the FIRST object from ResponseList. Makes it availabe for
@@ -75,6 +73,14 @@ class ResponseSingle(APIView):
 
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'dynamic_schemas/schema.html'
+
+    def make_date_readable(self, instances):
+        for instance in instances:
+            instance.pub_date = instance.pub_date \
+                                        .strftime('%a, %d %b %Y %H:%M:%S +0100')
+
+        return instances
+
 
     def get_object(self, pk):
         try:
@@ -88,8 +94,12 @@ class ResponseSingle(APIView):
     def get(self, request, pk):
         schema = Schema.objects.get(pk=pk)
         all_responses = SchemaResponse.objects.filter(schema=schema) 
+        readable_responses = self.make_date_readable(all_responses)
         object_count = SchemaResponse.objects.filter(schema=schema).count()
         serializer = SchemaResponseSerializer(all_responses, many=True)
+
         return Response({'single_response': self.get_object(pk),
             'count': range(object_count),
-            'all_responses': serializer.data})
+            'all_responses': serializer.data,
+            'pk': pk,
+            })

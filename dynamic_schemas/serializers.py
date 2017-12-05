@@ -11,7 +11,6 @@ class SchemaResponseSerializer(serializers.ModelSerializer):
         model = SchemaResponse
         fields = ('__all__')
 
-
 # Custom serializer here with __inti__
 # class SchemaColumnSerializer(serializers.Serializer):
 
