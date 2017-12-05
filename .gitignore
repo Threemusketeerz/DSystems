@@ -4,3 +4,4 @@ dynamic_schemas/__pycache__/
 db.sqlite3
 *.swp
 dynamic_schemas/*.swp
+DaminoSystemsv4/

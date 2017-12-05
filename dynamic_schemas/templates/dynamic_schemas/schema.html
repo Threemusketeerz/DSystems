@@ -1,2 +1,58 @@
 {% extends 'dynamic_schemas/base.html' %}
+{% load dynamic_schema_extras %}
 
+{% block content %}
+{{ single_response.fields.items }}
+<div class="dataTables-container">
+    <table id="dataTable" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                {% for h, r in single_response.items %}
+                    {% if h == 'id' %}
+                    <th>
+                        {{ h }}
+                    </th>
+                    {% endif %}
+                    {% if h == 'pub_date' %}
+                    <th>
+                        {{ h }}
+                    </th>
+                    {% endif %}
+                    {% if h == 'qa_set' %}
+                        {% for key, value in r|load_json %}
+                        <th>
+                        {{ key }}
+                        </th>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in all_responses %}
+            <tr>
+            {% for h, r in row.items %}
+                {% if h == 'id' %}
+                <td>
+                    {{ r }}
+                </th>
+                {% endif %}
+                {% if h == 'qa_set' %}
+                    {% for key, value in r|load_json %}
+                    <td>
+                    {{ value }}
+                    </td>
+                    {% endfor %}
+                {% endif %}
+                {% if h == 'pub_date' %}
+                <th>
+                    {{ r }}
+                </th>
+                {% endif %}
+            {% endfor %}
+            </tr> 
+            {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,9 +1,11 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.generic import ListView 
 
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.renderers import TemplateHTMLRenderer
 
 from .models import Schema, SchemaQuestion, SchemaResponse
 from .forms import SchemaResponseForm
@@ -50,46 +52,44 @@ def success_view(request, pk):
 
 
 """ API Views """
+# TODO Change this to class based views
+class ResponseList(APIView):
 
-
-@api_view(['GET', 'POST'])
-def schema_responses(request, pk):
     """
-    List instance schema data, or create new?
+    Lists responses according to schema
     """
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
         schema = Schema.objects.get(pk=pk)
         responses = SchemaResponse.objects.filter(schema=schema)
         serializer = SchemaResponseSerializer(responses, many=True)
         return Response(serializer.data)
-    
-    elif request.method == 'POST':
-        serializer = SchemaResponseSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT'])
-def schema_response_details(request, pk):
+class ResponseSingle(APIView):
+
     """
-    Retrive, update or delete a response.
+    Fetches the FIRST object from ResponseList. Makes it availabe for
+    schema.html
     """
 
-    try:
-        response = SchemaResponse.objects.get(pk=pk)
-    except Snippet.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'dynamic_schemas/schema.html'
 
-    if request.method == 'GET':
-        serializer = SchemaResponseSerializer(response)
-        return Response(serializer.data)
+    def get_object(self, pk):
+        try:
+            schema = Schema.objects.get(pk=pk)
+            single_response = SchemaResponse.objects.get(schema=schema, pk=1)
+            serializer = SchemaResponseSerializer(single_response)
+            return serializer.data
+        except single_response.DoesNotExist:
+            raise Http404
 
-    elif request.method == 'PUT':
-        serializer = SchemaResponseSerializer(response, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, pk):
+        schema = Schema.objects.get(pk=pk)
+        all_responses = SchemaResponse.objects.filter(schema=schema) 
+        object_count = SchemaResponse.objects.filter(schema=schema).count()
+        serializer = SchemaResponseSerializer(all_responses, many=True)
+        return Response({'single_response': self.get_object(pk),
+            'count': range(object_count),
+            'all_responses': serializer.data})
