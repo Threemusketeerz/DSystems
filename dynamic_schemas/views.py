@@ -11,8 +11,6 @@ from .models import Schema, SchemaQuestion, SchemaResponse
 from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 
-import json
-
 
 class SchemaIndexView(ListView):
     template_name = 'dynamic_schemas/index.html'
