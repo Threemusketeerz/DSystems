@@ -44,8 +44,8 @@ $(document).ready(function() {
                 "targets": "_all"
             }], 
             //"columns": columnsFile[0],
-            //"order": [[ columnsFile[0].length-1, 'desc' ]],
-            "lengthMenu": [20],
+            "order": [[0, 'desc']],
+            "lengthMenu": [30],
             // Responsive design for phones.
             "responsive": {
                 "details": {

@@ -75,6 +75,11 @@ class SchemaView(APIView):
     template_name = 'dynamic_schemas/schema.html'
 
     def make_date_readable(self, instances):
+        """ 
+        Helper function to change the dates to a format pleasing to the
+        eyes, takes a bundle of instances and converts their time.
+        """
+		
         for instance in instances:
             instance.pub_date = instance.pub_date \
                                         .strftime('%a, %d %b %Y %H:%M:%S +0100')
