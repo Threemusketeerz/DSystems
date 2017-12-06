@@ -67,23 +67,13 @@ $(document).ready(function() {
                 "extend": "selected",
                 "text": "Opdater",
                 "action": function(e, dt, node, config){
-                    var rows = dt.rows({"selected": true}).count();
+                    //var rows = dt.rows({"selected": true}).count();
                     var row_data = dt.row({"selected": true}).data();
 
-                    var row_data_keys = Object.keys(row_data);
+                    //var row_data_keys = Object.keys(row_data);
 
-                    for( var i=0; i < row_data_keys.length; i++ ){
-                        if( row_data[row_data_keys[i]].text === '' ){
-                            console.log("Empty", row_data_keys[i]);
-                        }
-                        else {
-                            console.log('Not empty ' + row_data_keys[i] + '+' + row_data[row_data_keys[i]].text);
-                        }
-                    }
-                    
-                    //console.log('row_data, ', row_data);
-
-                    alert( 'There are ' +rows+'(s) selected in the table' );
+                    var update_link = window.location.href + row_data[0] + '/update/'
+                    window.location.replace(update_link);
                 }
             }]
         })

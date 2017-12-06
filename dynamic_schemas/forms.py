@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from .models import Schema, SchemaQuestion, SchemaResponse
 
 
+# Rename ResponseForm
 class SchemaResponseForm(forms.Form):
 
     def __init__(self, schema, *args, **kwargs):
@@ -83,3 +84,62 @@ class SchemaResponseForm(forms.Form):
         else:
             return ValidationError('Form is not valid')
         return True
+
+
+class ResponseUpdateForm(forms.Form):
+    
+    def __init__(self, instance, pk, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # schema_questions = instance.get_questions
+        # __import__('ipdb').set_trace()
+
+        self.instance=instance 
+        # self.pk = pk
+    
+        for q, a in instance.qa_set.items():
+            queried_q = SchemaQuestion.objects.get(text=q)
+            if queried_q.is_response_bool and queried_q.is_editable:
+                self.fields[q] = forms.BooleanField(
+                        required=False,
+                        widget=forms.TextInput(
+                            attrs={'class':'form-control', 'readonly': True}
+                        )
+                )
+
+            if not queried_q.is_editable or a != '':
+                self.fields[q] = forms.CharField(
+                    required=False,
+                    max_length=100,
+                    initial=a,
+                    widget=forms.TextInput(
+                        attrs={'class':'form-control', 'readonly': True}
+                        )
+                )
+                
+            else:
+                self.fields[q] = forms.CharField(
+                    required=False,
+                    max_length=100,
+                    initial=a, # Should be empty '' else remove this field
+                    widget=forms.TextInput(
+                        attrs={'class': 'form-control'}
+                        )
+                )
+
+        self.fields['schema'] = forms.CharField(
+            initial=instance.schema.name,
+            widget=forms.HiddenInput(),
+            required=True
+        )
+
+    def update(self, *args, **kwargs):
+        if self.cleaned_data:
+
+            # Update instancewith new qa_set. 
+            del self.cleaned_data['schema']
+
+            self.instance.qa_set = self.cleaned_data 
+            self.instance.save()
+
+        else:
+            return ValidationError("NOT VALID")

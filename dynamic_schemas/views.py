@@ -8,8 +8,10 @@ from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
 
 from .models import Schema, SchemaQuestion, SchemaResponse
-from .forms import SchemaResponseForm
+from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
+
+import json
 
 
 class SchemaIndexView(ListView):
@@ -48,6 +50,27 @@ def form_view(request, pk):
     return render(request, f'dynamic_schemas/create.html', {'form': form})
 
 
+def form_update_view(request, pk, r_pk):
+    schema = Schema.objects.get(pk=pk)
+    instance = SchemaResponse.objects.get(schema=schema, pk=r_pk)
+    
+
+    # if request.method == 'GET':
+    form = ResponseUpdateForm(instance, r_pk)
+        # return render(request, f'dynamic_schemas/update.html', {'form_update': form})
+
+
+    if request.method == 'POST':
+        form = ResponseUpdateForm(instance, r_pk, request.POST or None)
+        # __import__('ipdb').set_trace()
+        if form.is_valid():
+
+            form.update()
+            
+            return redirect(f'/dynamic_schemas/{pk}')
+        
+    return render(request, f'dynamic_schemas/update.html', {'form_update': form})
+
 
 """ API Views """
 # TODO Change this to class based views
@@ -64,11 +87,42 @@ class ResponseList(APIView):
         return Response(serializer.data)
 
 
+# class ResponseUpdate(APIView):
+
+    # """Grabs a single instance for updating the state."""
+
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = 'dynamic_schemas/update.html'
+
+    # def get(self, request, pk, r_pk, format=None):
+        # response = SchemaResponse.objects.get(pk=r_pk)
+        # serializer = SchemaResponseSerializer(response)
+        # form = ResponseUpdateForm(response)
+        # # return Response({'update_form': serializer.data}, status=201)
+        # return render(request, f'dynamic_schemas/update.html', {'form_update': form})
+
+    
+    # def post(self, request, pk, r_pk, format=None):
+        # print(self)
+        # response = SchemaResponse.objects.get(pk=r_pk)
+        # form = ResponseUpdateForm(response)
+
+        # __import__('pdb').set_trace()
+        # if form.is_valid():
+            # form.save()
+            
+            # return redirect(f'/dynamic_schemas/{pk}')
+
+
+        
+
 class SchemaView(APIView):
 
     """
     Fetches the FIRST object from ResponseList. Makes it availabe for
-    schema.html
+    as a template for the table in schema.html
+
+    Excludes schema.id, and the placeholder qa_set in the template.
     """
 
     renderer_classes = [TemplateHTMLRenderer]
