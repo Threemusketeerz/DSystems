@@ -37,6 +37,7 @@ class SchemaResponseForm(forms.Form):
         )
 
     def save(self, commit=True, *args, **kwargs):
+        # This assumes .is_valid is checked first.
         if self.cleaned_data:
             # We remove the schema from the dict itself, it gets passed to
             # schema attr on object instead
@@ -50,43 +51,11 @@ class SchemaResponseForm(forms.Form):
             return ValidationError("NOT VALID")
 
 
-    def is_consistent(self):
-        # This is sort of a wrapper for is_valid to make the data valid to us.
-        # This will fill out the cleaned_data, if it didn't submit a question. It
-        # is a catcher of consistency.
-        # There will be complications if a new question is added to the Schema.
-        # This should either be avoided or built into the function.
-
-        q_set = SchemaQuestion.objects.filter(schema=self.schema)
-        q_set_list = [q.text for q in q_set]
-
-        # This should honestly probably be moved to VIEWS.
-        if self.is_valid():
-
-            del self.cleaned_data['schema']
-
-            qa_set_keys = [ k for k in self.cleaned_data.keys() ]
-
-            print('Comparing: ', q_set_list)
-            print('With: ', qa_set_keys)
-
-            if qa_set_keys == q_set_list:
-                return print('Lists are consistent')
-
-            else:
-                for q in q_set_list:
-                    if q in qa_set_keys:
-                        continue
-                    else:
-                        print(f'{q} is not in form; Replacing with empty answer')
-                        qa_set[q] = ''
-
-        else:
-            return ValidationError('Form is not valid')
-        return True
-
-
 class ResponseUpdateForm(forms.Form):
+
+    """
+    Handles the form for updating the fields.
+    """
     
     def __init__(self, instance, pk, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,7 +67,10 @@ class ResponseUpdateForm(forms.Form):
     
         for q, a in instance.qa_set.items():
             queried_q = SchemaQuestion.objects.get(text=q)
-            if queried_q.is_response_bool and queried_q.is_editable:
+
+            # If is_response_bool, we don't want it to be editable untill
+            # proper conditions have been setup for such a scenario.
+            if queried_q.is_response_bool:
                 self.fields[q] = forms.BooleanField(
                         required=False,
                         widget=forms.TextInput(
@@ -106,6 +78,9 @@ class ResponseUpdateForm(forms.Form):
                         )
                 )
 
+
+            # If it is editable, and NOT empty. After it has been entered we
+            # dont want people to enter new data.
             if not queried_q.is_editable or a != '':
                 self.fields[q] = forms.CharField(
                     required=False,

@@ -5,3 +5,5 @@ db.sqlite3
 *.swp
 dynamic_schemas/*.swp
 DaminoSystemsv4/
+.coverage
+htmlcov/
