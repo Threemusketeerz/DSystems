@@ -9,9 +9,9 @@ class SchemaResponseForm(forms.Form):
 
     def __init__(self, schema, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        schema_questions = schema.schemaquestion_set.all()
+        self.schema_questions = schema.schemaquestion_set.all()
         self.schema = schema
-        for question in schema_questions:
+        for question in self.schema_questions:
             if question.is_response_bool:
                 self.fields[question.text]=forms.BooleanField(
                     required=False,
@@ -62,33 +62,36 @@ class ResponseUpdateForm(forms.Form):
         # schema_questions = instance.get_questions
         # __import__('ipdb').set_trace()
 
-        self.instance=instance 
+        self.instance = instance 
+        self.schema = Schema.objects.get(pk=pk)
+        self.schema_questions = self.schema.schemaquestion_set.all()
         # self.pk = pk
     
         for q, a in instance.qa_set.items():
-            queried_q = SchemaQuestion.objects.get(text=q)
+            queried_q = SchemaQuestion.objects.get(schema=self.schema, text=q)
 
             # If is_response_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
             if queried_q.is_response_bool:
                 self.fields[q] = forms.BooleanField(
-                        required=False,
-                        widget=forms.TextInput(
-                            attrs={'class':'form-control', 'readonly': True}
-                        )
+                    required=False,
+                    widget=forms.TextInput(
+                        attrs={'class':'form-control', 'readonly': True}
+                    )
                 )
+                # __import__('ipdb').set_trace()
 
 
             # If it is editable, and NOT empty. After it has been entered we
             # dont want people to enter new data.
-            if not queried_q.is_editable or a != '':
+            elif not queried_q.is_editable or a != '':
                 self.fields[q] = forms.CharField(
                     required=False,
                     max_length=100,
                     initial=a,
                     widget=forms.TextInput(
                         attrs={'class':'form-control', 'readonly': True}
-                        )
+                    )
                 )
                 
             else:
@@ -98,7 +101,7 @@ class ResponseUpdateForm(forms.Form):
                     initial=a, # Should be empty '' else remove this field
                     widget=forms.TextInput(
                         attrs={'class': 'form-control'}
-                        )
+                    )
                 )
 
         self.fields['schema'] = forms.CharField(
@@ -107,9 +110,37 @@ class ResponseUpdateForm(forms.Form):
             required=True
         )
 
+    def is_valid(self):
+
+        # Parent validation first, get cleaned data.
+        valid = super().is_valid()
+
+        if not valid:
+            return valid
+        # __import__('ipdb').set_trace()
+
+        fetch_questions = [q.text for q in self.schema_questions]
+        fetch_questions.append(self.schema.name)
+
+        for q in self.cleaned_data:
+            if q not in fetch_questions:
+                try:
+                    raise AttributeError(f'{q} is in your imagination')
+                finally:
+                    return False
+
+        return True
+        
+        # questions = SchemaQuestion.objects.filter(schema=self.schema)
+
+        # list_to_comp = [q for q in cleaned_data]
+        # q_to_comp = [q.text for q in questions] 
+
+
     def update(self, *args, **kwargs):
         if self.cleaned_data:
 
+            __import__('ipdb').set_trace()
             # Update instancewith new qa_set. 
             del self.cleaned_data['schema']
 

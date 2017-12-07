@@ -60,10 +60,10 @@ def form_update_view(request, pk, r_pk):
 
     if request.method == 'POST':
         form = ResponseUpdateForm(instance, r_pk, request.POST or None)
-        # __import__('ipdb').set_trace()
         if form.is_valid():
 
             form.update()
+            # __import__('ipdb').set_trace()
             
             return redirect(f'/dynamic_schemas/{pk}')
         
