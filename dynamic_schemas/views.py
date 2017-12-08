@@ -127,13 +127,12 @@ class SchemaView(APIView):
 
     def get(self, request, pk):
         schema = Schema.objects.get(pk=pk)
+
         all_responses = SchemaResponse.objects.filter(schema=schema) 
-        readable_responses = self.make_date_readable(all_responses)
-        object_count = SchemaResponse.objects.filter(schema=schema).count()
+        self.make_date_readable(all_responses)
+
         serializer = SchemaResponseSerializer(all_responses, many=True)
 
         return Response({'single_response': self.get_object(pk),
-            'count': range(object_count),
-            'all_responses': serializer.data,
-            'pk': pk,
-            })
+                        'all_responses': serializer.data,
+                        'pk': pk, })

@@ -122,7 +122,9 @@ class ResponseUpdateForm(forms.Form):
         fetch_questions = [q.text for q in self.schema_questions]
         fetch_questions.append(self.schema.name)
 
-        for q in self.cleaned_data:
+        # __import__('ipdb').set_trace()
+        # Keeping this for now, as long as it doesnt cause trouble
+        for q in self.data:
             if q not in fetch_questions:
                 try:
                     raise AttributeError(f'{q} is in your imagination')
