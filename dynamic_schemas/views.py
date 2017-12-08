@@ -41,7 +41,9 @@ def form_view(request, pk):
 
             form.save()
             
-            return redirect(f'/dynamic_schemas/{pk}')
+            # TODO Write tests for this. 
+            return redirect(reverse('dynamic_schemas:schema_view',
+                                    kwargs={'pk': pk}))
     else:
         form = SchemaResponseForm(schema)
 
@@ -71,11 +73,12 @@ def form_update_view(request, pk, r_pk):
 
 
 """ API Views """
-# TODO Change this to class based views
 class ResponseList(APIView):
 
     """
-    Lists responses according to schema
+    Lists responses according to schema.
+    Purely for APIView for now. Not being used in the actual rendering af the
+    tables.
     """
 
     def get(self, request, pk, format=None):
