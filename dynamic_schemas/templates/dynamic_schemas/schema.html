@@ -63,12 +63,12 @@
 
 {% endblock %}
 {% block helpurls %}
-<div id="helpfield-container">
-    {% if helpurls %} 
+{% if helpurls %} 
+    <div id="helpfield-container">
     {% for link in helpurls %}
     <a class="btn btn-primary" id="btn{{ forloop.counter }}"
        href="{% url 'dynamic_schemas:help_urls' %}">{{ link.link_name }}</a>
     {% endfor %}
-    {% endif %}
-</div>
+    </div>
+{% endif %}
 {% endblock %}

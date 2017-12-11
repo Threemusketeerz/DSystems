@@ -62,7 +62,7 @@ $(document).ready(function() {
             "select": {
                 "style": "single" 
             }, 
-            "dom": "Bfrtip",
+            "dom": "Bfrltip",
             "buttons": [{
                 "extend": "selected",
                 "text": "Opdater",
@@ -72,10 +72,18 @@ $(document).ready(function() {
 
                     //var row_data_keys = Object.keys(row_data);
 
-                    var update_link = window.location.href + row_data[0] + '/update/'
+                    var update_link = window.location.href + row_data[0] + '/update/';
                     window.location.replace(update_link);
+                    }
+                },
+                {
+                "text": "Ny Indtast",
+                "action": function(e, dt, node, config){
+                    var create_link = window.location.href + 'create/';
+                    window.location.replace(create_link);
+                    }
                 }
-            }]
+            ]
         })
         table.on( 'select', function ( e, dt, type, indexes ) {
             console.log(type, indexes);
