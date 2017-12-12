@@ -25,7 +25,7 @@ class Schema(models.Model):
     help_field = models.ManyToManyField(SchemaHelpUrl,
                                         verbose_name='Instruktions felt',)
     is_active = models.BooleanField(default=False,
-                                    verbose_name='Er skemaet aktivt?',)
+                                    verbose_name='Aktivt',)
 
     def __str__(self):
         return self.name

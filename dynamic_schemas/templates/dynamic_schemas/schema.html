@@ -2,6 +2,7 @@
 {% load dynamic_schema_extras %}
 
 {% block content %}
+{% if schema.is_active %}
 <div class="topnav">
     <ul>
         <li>
@@ -60,15 +61,21 @@
             {% endfor %}
     </table>
 </div>
+{% else %}
+<h1> Skema inaktivt, kontakt admin </h1>
+{% endif %}
 
 {% endblock %}
 {% block helpurls %}
-{% if helpurls %} 
-    <div id="helpfield-container">
-    {% for link in helpurls %}
-    <a class="btn btn-primary" id="btn{{ forloop.counter }}"
-       href="{% url 'dynamic_schemas:help_urls' %}">{{ link.link_name }}</a>
-    {% endfor %}
-    </div>
+{% if schema.is_active %}
+    {% if helpurls %} 
+        <div id="helpfield-container">
+        {% for link in helpurls %}
+        <a class="btn btn-primary" id="btn{{ forloop.counter }}"
+           href="{% url 'dynamic_schemas:help_urls' %}">{{ link.link_name }}</a>
+        {% endfor %}
+        </div>
+    {% endif %}
 {% endif %}
 {% endblock %}
+

@@ -19,7 +19,6 @@ class SchemaIndexView(ListView):
     def get_queryset(self):
         return Schema.objects.all()
 
-
 # class SchemaView(ListView):
     # template_name = 'dynamic_schemas/schema.html'
     # context_object_name = 'schema'
@@ -138,4 +137,5 @@ class SchemaView(APIView):
 
         return Response({'single_response': self.get_object(pk),
                         'all_responses': serializer.data,
-                        'pk': pk, })
+                        'pk': pk,
+                        'schema': schema, })
