@@ -44,23 +44,5 @@ class SchemaAdmin(admin.ModelAdmin):
     inlines = [QuestionInline]
 
 
-    # def schema_lock(self, val_to_check_for):
-        # fields = self.fieldsets[0][1]['fields']
-        # if val_to_check_for in fields:
-            # __import__('ipdb').set_trace()
-            # # This is a bit unpythonish, but does the job, since the lists are
-            # # static (luckily).
-            # self.fieldsets[0][1]['fields'].pop()
-            # self.inlines.pop()
-
-    # def save_model(self, request, obj, form, change):
-        # if obj.is_locked:
-            # self.schema_lock('is_locked')
-
-        # if not obj.is_locked:
-            # self.inlines.append(QuestionInline)
-        # super().save_model(request, obj, form, change)
-
-
 admin.site.register(Schema, SchemaAdmin)
 admin.site.register(SchemaHelpUrl)

@@ -1,5 +1,7 @@
 from django.db import models
 from jsonfield import JSONField
+
+from .exceptions import SchemaIsLockedError
 # Create your models here.
 
 
@@ -54,9 +56,17 @@ class SchemaQuestion(models.Model):
 
     def save(self, *args, **kwargs):
         if self.schema.is_locked:
-            return Exception(f'{self.schema.name} is locked, can\'t save')
+            raise SchemaIsLockedError(f'{self.schema.name}.is_locked = '
+                                      f'{self.schema.is_locked}, can\'t save')
         else:
             super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.schema.is_locked:
+            raise SchemaIsLockedError(f'{self.schema.name}.is_locked = '
+                                      f'{self.schema.is_locked}, can\'t delete')
+        else:
+            super().delete(*args, **kwargs)
 
 
 class SchemaResponse(models.Model):

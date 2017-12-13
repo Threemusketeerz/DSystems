@@ -4,8 +4,9 @@ from django.shortcuts import reverse
 from django.core.exceptions import ObjectDoesNotExist
 
 from . import views
-from .models import Schema, SchemaQuestion, SchemaResponse
 from .forms import SchemaResponseForm, ResponseUpdateForm
+from .models import Schema, SchemaQuestion, SchemaResponse
+from .exceptions import SchemaIsLockedError
 
 import unittest
 import random
@@ -31,19 +32,64 @@ def create_json_for_response(q_instances, response):
 class SchemaQuestionTests(TestCase):
     def setUp(self):
         self.schema = Schema.objects.create(name='test schema')
-        self.q1 = SchemaQuestion.objects.create(schema=self.schema, 
-                text='test q1')
+        self.q1 = SchemaQuestion.objects.create(
+                    schema=self.schema, 
+                    text='test q1',
+                    )
 
     def test_uniqueness_of_questions_by_schema_IntegrityError_True(self):
         with self.assertRaises(IntegrityError):
-            q2 = SchemaQuestion.objects.create(schema=self.schema,
-                    text='test q1')
+            q2 = SchemaQuestion.objects.create(
+                    schema=self.schema,
+                    text='test q1',
+                    )
 
     @unittest.expectedFailure
     def test_uniqueness_of_questions_by_schema_IntegrityError_False(self):
         with self.assertRaises(IntegrityError):
-            q2 = SchemaQuestion.objects.create(schema=self.schema,
-                    text='test q2')
+            q2 = SchemaQuestion.objects.create(
+                    schema=self.schema,
+                    text='test q2',
+                    )
+
+
+class SchemaQuestionSaveTests(TestCase):
+    def setUp(self):
+        self.schema = Schema.objects.create(name='test schema', is_locked=True)
+
+    def test_failure_at_save_if_schema_is_locked(self):
+        with self.assertRaises(SchemaIsLockedError):
+            SchemaQuestion.objects.create(
+                    schema=self.schema, 
+                    text='failing question',
+                    )
+
+    # --------------------------------------------------------------
+    # These two tests provide proof that there is a backdoor to change schemas
+    # if it is ABSOLUTELY necessary, otherwise it should be avoided.
+    def test_schema_state_is_false(self):
+        self.assertEqual(self.schema.is_active, False)
+        self.assertEqual(self.schema.is_locked, True)
+
+    def test_schema_can_still_save(self):
+        self.schema.is_active = True 
+        self.schema.is_locked = False
+        self.schema.save
+        self.assertEqual(self.schema.is_active, True)
+        self.assertEqual(self.schema.is_locked, False)
+    # --------------------------------------------------------------
+
+
+class SchemaQuestionDeleteTests(TestCase):
+    def setUp(self):
+        self.schema = Schema.objects.create(name='test schema')
+        self.q1 = SchemaQuestion.objects.create(schema=self.schema, text='q1')
+        self.schema.is_locked = True
+        self.schema.save()
+
+    def test_failure_to_delete_if_schema_is_locked(self):
+        with self.assertRaises(SchemaIsLockedError):
+            SchemaQuestion.objects.get(pk=self.q1.id).delete()
 
 
 
