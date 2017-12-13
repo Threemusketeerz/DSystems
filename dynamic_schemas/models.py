@@ -26,6 +26,10 @@ class Schema(models.Model):
                                         verbose_name='Instruktions felt',)
     is_active = models.BooleanField(default=False,
                                     verbose_name='Aktivt',)
+    is_locked = models.BooleanField(default=False,
+                                    verbose_name='Lås',
+                                    help_text='Hvis du låser kan du ikke ændre'
+                                    ' tabellen i fremtiden.')
 
     def __str__(self):
         return self.name
@@ -37,14 +41,22 @@ class SchemaQuestion(models.Model):
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
     text = models.CharField(max_length=100,)
-    is_response_bool = models.BooleanField(default=False,)
-    is_editable = models.BooleanField(default=False,)
-    
-    def __str__(self):
-        return self.text
+    is_response_bool = models.BooleanField(default=False,
+                                           verbose_name='Ja/Nej spørgsmål',)
+    is_editable = models.BooleanField(default=False,
+                                      verbose_name='Felt kan ændres',)
 
     class Meta:
         unique_together = ('schema', 'text',)
+
+    def __str__(self):
+        return self.text
+
+    def save(self, *args, **kwargs):
+        if self.schema.is_locked:
+            return Exception(f'{self.schema.name} is locked, can\'t save')
+        else:
+            super().save(*args, **kwargs)
 
 
 class SchemaResponse(models.Model):
