@@ -6,8 +6,12 @@ from .models import Schema, SchemaQuestion, SchemaHelpUrl
 # Register your models here.
 class SchemaAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        # We want default behavior, so calling __init__ first to fetch attrs
         super().__init__(*args, **kwargs) 
-        # __import__('ipdb').set_trace()
+
+        # Edit the current instance's state to locked, by disabling access to
+        # 'is_locked' attr. This can be accessed through python shell though as
+        # an intended backdoor.
         if kwargs['instance'].is_locked:
             self.fields['is_locked'].widget = forms.HiddenInput()
     

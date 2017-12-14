@@ -285,10 +285,14 @@ class ViewTests(TestCase):
     def test_schema_row_update_returns_200(self):
         schema = Schema.objects.create(name='test')
         schema_q = SchemaQuestion.objects.create(text='q1', schema=schema)
-        schema_r = SchemaResponse.objects.create(schema=schema, 
-                qa_set={'q1': 'blabla'})
-        url = reverse('dynamic_schemas:update_response',
-                kwargs={'pk': schema.id, 'r_pk': schema_r.id})
+        schema_r = SchemaResponse.objects.create(
+                schema=schema, 
+                qa_set={'q1': 'blabla'},
+                )
+        url = reverse(
+                'dynamic_schemas:update_response',
+                kwargs={'pk': schema.id, 'r_pk': schema_r.id},
+                )
         self.assertEqual(self.c.get(url).status_code, 200)
         self.assertNotEqual(self.c.get(url).status_code, 404)
 

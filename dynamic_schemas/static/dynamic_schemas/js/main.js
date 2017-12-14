@@ -63,7 +63,15 @@ $(document).ready(function() {
                 "style": "single" 
             }, 
             "dom": "Bfrltip",
-            "buttons": [{
+            "buttons": [
+                {
+                "text": "<- Tilbage",
+                "action": function(e, dt, node, config){
+                    var overview_link =  '/dynamic_schemas/';
+                    window.location.replace(overview_link);
+                    }
+                },
+                {
                 "extend": "selected",
                 "text": "Opdater",
                 "action": function(e, dt, node, config){
@@ -82,7 +90,8 @@ $(document).ready(function() {
                     var create_link = window.location.href + 'create/';
                     window.location.replace(create_link);
                     }
-                }
+                },
+
             ]
         })
         table.on( 'select', function ( e, dt, type, indexes ) {

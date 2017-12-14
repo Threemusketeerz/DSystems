@@ -1,6 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render, redirect, reverse
 from django.views.generic import ListView 
+from django.contrib.auth.decorators import login_required
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 
 
+# @login_required(login_url='/accounts/login/')
 class SchemaIndexView(ListView):
     template_name = 'dynamic_schemas/index.html'
     context_object_name = 'all_schemas'
@@ -28,6 +30,7 @@ class SchemaIndexView(ListView):
         # return SchemaQuestion.objects.filter(rel_schema=schema_instance)
 
 
+# @login_required
 def form_view(request, pk):
     schema = Schema.objects.get(pk=pk)
 
@@ -49,18 +52,19 @@ def form_view(request, pk):
     return render(request, f'dynamic_schemas/create.html', {'form': form})
 
 
+# @login_required
 def form_update_view(request, pk, r_pk):
     schema = Schema.objects.get(pk=pk)
     instance = SchemaResponse.objects.get(schema=schema, pk=r_pk)
     
 
     # if request.method == 'GET':
-    form = ResponseUpdateForm(instance, r_pk)
+    form = ResponseUpdateForm(instance, pk)
         # return render(request, f'dynamic_schemas/update.html', {'form_update': form})
 
 
     if request.method == 'POST':
-        form = ResponseUpdateForm(instance, r_pk, request.POST or None)
+        form = ResponseUpdateForm(instance, pk, request.POST or None)
         if form.is_valid():
 
             form.update()
@@ -72,6 +76,7 @@ def form_update_view(request, pk, r_pk):
 
 
 """ API Views """
+# @login_required
 class ResponseList(APIView):
 
     """
@@ -87,6 +92,7 @@ class ResponseList(APIView):
         return Response(serializer.data)
 
 
+# @login_required
 class SchemaView(APIView):
 
     """
@@ -121,21 +127,28 @@ class SchemaView(APIView):
                 single_response = all_responses.first()
                 serializer = SchemaResponseSerializer(single_response)
                 return serializer.data
-            else:
-                pass
+            # else:
+                # pass
 
         except single_response.DoesNotExist:
             raise Http404
 
     def get(self, request, pk):
         schema = Schema.objects.get(pk=pk)
+        schema_help_urls = schema.help_field.all()
 
         all_responses = SchemaResponse.objects.filter(schema=schema) 
         self.make_date_readable(all_responses)
 
         serializer = SchemaResponseSerializer(all_responses, many=True)
 
-        return Response({'single_response': self.get_object(pk),
-                        'all_responses': serializer.data,
-                        'pk': pk,
-                        'schema': schema, })
+        data = {'single_response': self.get_object(pk),
+                'all_responses': serializer.data,
+                'pk': pk,
+                'schema': schema,
+                'help_urls': schema_help_urls, }
+
+        # __import__('ipdb').set_trace()
+        return Response(data)
+
+
