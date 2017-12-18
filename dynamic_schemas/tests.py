@@ -137,10 +137,9 @@ class FormTests(TestCase):
         # r = SchemaResponse.objects.filter(schema=schema).first()
         form = SchemaResponseForm(self.schema)
         form_fields_len = len(form.fields)
-        expected_len = len(self.questions) + 1
+        expected_len = len(self.questions)
 
         self.assertEqual(form_fields_len, expected_len)
-        self.assertNotEquals(form_fields_len, form_fields_len -1)
 
     def test_response_form_fields_match_questions_plus_schema(self):
         json = create_json_for_response(self.questions, 'forms')
@@ -151,7 +150,6 @@ class FormTests(TestCase):
         # ['test q1', 'test q2', 'schema']
         form_fields = [f for f in form.fields]
         exp_fields = [q.text for q in self.questions]
-        exp_fields.append('schema')
 
         self.assertEqual(form_fields, exp_fields)
 

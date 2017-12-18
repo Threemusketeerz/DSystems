@@ -1,4 +1,7 @@
 {% load static %}
+{% load dynamic_schema_extras %}
+
+{# field classes are loaded in forms.py. #}
 <html>
     <head>
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
@@ -18,6 +21,13 @@
                 {% for field in form %} 
                 {% if field.is_hidden %} 
                 {{ field }}
+                {% elif field|is_a_checkbox %}
+                <div class="form-check">
+                    <label class="form-check-label" for="id_{{ field.label }}"> 
+                        {{ field }}
+                        {{ field.label }}
+                    </label>
+                </div>
                 {% else %}
                 {{ field.label_tag }}
                 {{ field }}

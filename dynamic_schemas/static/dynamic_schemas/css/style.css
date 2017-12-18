@@ -9,6 +9,11 @@ body {
     border-radius: 15px 50px;
 }
 
+.form-check-input {
+    width: 20px;
+    height: 20px;
+}
+
 .header {
     color: white;
     background-color: #337AB7;

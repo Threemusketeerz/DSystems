@@ -7,6 +7,12 @@ import ast
 register = template.Library()
 
 @register.filter
+def is_a_checkbox(field):
+    if field.subwidgets[0].data['type'] == 'checkbox':
+        return True
+    return False 
+
+@register.filter
 def load_json(data):
     eval_json = ast.literal_eval(data)
     return eval_json.items()

@@ -12,8 +12,11 @@ class SchemaAdminForm(forms.ModelForm):
         # Edit the current instance's state to locked, by disabling access to
         # 'is_locked' attr. This can be accessed through python shell though as
         # an intended backdoor.
-        if kwargs['instance'].is_locked:
-            self.fields['is_locked'].widget = forms.HiddenInput()
+        # __import__('ipdb').set_trace()
+        if 'instance' in kwargs:
+            if hasattr(kwargs['instance'], 'is_locked') \
+            and kwargs['instance'].is_locked:
+                self.fields['is_locked'].widget = forms.HiddenInput()
     
     class Meta:
         model = Schema

@@ -32,9 +32,9 @@ $(document).ready(function() {
                 // Renders glyphicons if boolean true or false.
                 "render": function(data, type, row, meta){
                     if(typeof data === "boolean"){
-                        if (data === true)
+                        if (data === 'True')
                             return "<span class='glyphicon glyphicon-ok' style='font-size: 1.5em;'></span>";
-                        if(data === false)
+                        if(data === 'False')
                             return "<span class='glyphicon glyphicon-remove' style='font-size: 1.5em'></span>";
                     }
                     else        

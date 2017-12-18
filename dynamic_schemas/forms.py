@@ -6,6 +6,13 @@ from .models import Schema, SchemaQuestion, SchemaResponse
 
 
 # Rename ResponseForm
+SELECT_CHOICES = [ 
+    ('Ingenting','Ingenting'),
+    ('Ja','Ja'), 
+    ('Nej','Nej'), 
+]
+SELECT_LEN = len(SELECT_CHOICES)
+
 class SchemaResponseForm(forms.Form):
 
     def __init__(self, schema, *args, **kwargs):
@@ -16,12 +23,24 @@ class SchemaResponseForm(forms.Form):
         self.schema = schema
         for question in self.schema_questions:
             if question.is_response_bool:
-                self.fields[question.text]=forms.BooleanField(
-                    required=False,
-                    widget=forms.TextInput(
-                        attrs={'class':'form-control'}
-                    ),
-                )
+                    self.fields[question.text] = forms.ChoiceField(
+                        choices=SELECT_CHOICES,
+                        widget=forms.Select(
+                            attrs={
+                            'class': 'form-control'
+                            }
+                        )
+
+                    )
+                # self.fields[question.text]=forms.NullBooleanField(
+                    # required=False,
+                    # widget=forms.TextInput(
+                        # attrs = {
+                            # 'class':'form-check-input',
+                            # 'type': 'checkbox',
+                        # }
+                    # ),
+                # )
 
             else:
                 self.fields[question.text] = forms.CharField(
@@ -65,6 +84,11 @@ class ResponseUpdateForm(forms.Form):
         self.instance = instance 
         self.schema = Schema.objects.get(pk=pk)
         self.schema_questions = self.schema.schemaquestion_set.all()
+        self.c_widget = forms.Select(
+                            attrs={
+                                'class': 'form-control'
+                            }
+                        )
         # self.pk = pk
     
         for q, a in instance.qa_set.items():
@@ -73,17 +97,43 @@ class ResponseUpdateForm(forms.Form):
             # If is_response_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
             if queried_q.is_response_bool:
-                self.fields[q] = forms.BooleanField(
-                    required=False,
-                    widget=forms.TextInput(
-                        attrs={'class':'form-control', 'readonly': True}
+                if queried_q.is_editable \
+                and a is 'Ingenting':
+                    self.fields[q] = forms.ChoiceField(
+                        choices=SELECT_CHOICES,
+                        widget=self.c_widget
+                        
                     )
-                )
-                # __import__('ipdb').set_trace()
+                    # self.fields[q] = forms.NullBooleanField(
+                        # required=False,
+                        # initial=a,
+                        # widget=forms.TextInput(
+                            # attrs={
+                                # 'class':'form-check-input',
+                                # 'type': 'checkbox',
+                                # 'indeterminate': True,
+                            # }
+                        # )
+                    # )
 
+                else:
+                    self.fields[q] = forms.ChoiceField(
+                        choices=SELECT_CHOICES,
+                        widget=self.c_widget
+                    )
+                    # self.fields[q].initial = a
+                    # self.fields[q] = forms.NullBooleanField(
+                        # required=False,
+                        # widget=forms.TextInput(
+                            # attrs={
+                                # 'class':'form-check-input',
+                                # 'type': 'checkbox',
+                                # 'disabled': True,
+                            # }
+                        # )
+                    # )
+                    self.fields[q].initial = a
 
-            # If it is editable, and NOT empty. After it has been entered we
-            # dont want people to enter new data.
             elif not queried_q.is_editable or a != '':
                 self.fields[q] = forms.CharField(
                     required=False,
@@ -104,11 +154,11 @@ class ResponseUpdateForm(forms.Form):
                     )
                 )
 
-        self.fields['schema'] = forms.CharField(
-            initial=instance.schema.name,
-            widget=forms.HiddenInput(),
-            required=True
-        )
+        # self.fields['schema'] = forms.CharField(
+            # initial=instance.schema.name,
+            # widget=forms.HiddenInput(),
+            # required=True
+        # )
 
     def is_valid(self):
 
@@ -117,15 +167,14 @@ class ResponseUpdateForm(forms.Form):
 
         if not valid:
             return valid
-        # __import__('ipdb').set_trace()
 
         fetch_questions = [q.text for q in self.schema_questions]
-        fetch_questions.append(self.schema.name)
+        # fetch_questions.append(self.schema.name)
 
-        # __import__('ipdb').set_trace()
         # Keeping this for now, as long as it doesnt cause trouble
         for q in self.data:
-            if q not in fetch_questions:
+            if q not in fetch_questions \
+            and q != 'csrfmiddlewaretoken':
                 try:
                     raise AttributeError(f'{q} is in your imagination')
                 finally:
@@ -141,10 +190,6 @@ class ResponseUpdateForm(forms.Form):
 
     def update(self, *args, **kwargs):
         if self.cleaned_data:
-
-            __import__('ipdb').set_trace()
-            # Update instancewith new qa_set. 
-            del self.cleaned_data['schema']
 
             self.instance.qa_set = self.cleaned_data 
             self.instance.save()
