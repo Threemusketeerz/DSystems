@@ -39,22 +39,15 @@ def form_view(request, pk):
         form = SchemaResponseForm(schema, request.POST)
 
         if form.is_valid():
-            # This removes schema from qa_set only.
-            del form.cleaned_data['schema']
-            # del form.cleaned_data['user']
 
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
             
-            # __import__('ipdb').set_trace()
-            
-            # TODO Write tests for this. 
             return redirect(reverse('dynamic_schemas:schema_view',
                                     kwargs={'pk': pk}))
     else:
         form = SchemaResponseForm(schema)
-        # __import__('ipdb').set_trace()
 
     return render(request, f'dynamic_schemas/create.html', {'form': form})
 

@@ -33,28 +33,10 @@ class SchemaResponseForm(forms.Form):
                     ),
                 )
 
-        # Do I really need to pass this?
-        self.fields['schema'] = forms.CharField(
-            initial=schema.name,
-            widget=forms.HiddenInput(),
-            required=True
-        )
-        # self.fields['user'] = forms.CharField(
-            # initial=user.username,
-            # widget=forms.HiddenInput(),
-            # required=True
-        # )
-
     def save(self, commit=True, *args, **kwargs):
-        # This assumes .is_valid is checked first.
-        if self.cleaned_data:
-            # We remove the schema from the dict itself, it gets passed to
-            # schema attr on object instead
 
-            # instance = SchemaResponse.objects.create(
-                # schema = self.schema,
-                # qa_set = self.cleaned_data,
-            # )
+        if self.cleaned_data:
+
             instance = SchemaResponse(
                 schema = self.schema,
                 qa_set = self.cleaned_data,
