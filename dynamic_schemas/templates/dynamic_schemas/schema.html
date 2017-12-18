@@ -25,6 +25,11 @@
 						Dato
                     </th>
                     {% endif %}
+                    {% if h == 'user' %}
+                    <th>
+					    Lavet af	
+                    </th>
+                    {% endif %}
                     {% if h == 'qa_set' %}
                         {% for key, value in r|load_json %}
                         <th>
@@ -42,7 +47,7 @@
                 {% if h == 'id' %}
                 <td>
                     {{ r }}
-                </th>
+                </td>
                 {% endif %}
                 {% if h == 'qa_set' %}
                     {% for key, value in r|load_json %}
@@ -52,11 +57,14 @@
                     {% endfor %}
                 {% endif %}
                 {% if h == 'pub_date' %}
-                <th>
+                <td>
                     {{ r }}
-                </th>
+                </td>
                 {% endif %}
             {% endfor %}
+            <td>
+            {{ row.user|get_full_user_name }}
+            </td>
             </tr> 
             {% endfor %}
     </table>

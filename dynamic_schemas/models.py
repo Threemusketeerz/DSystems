@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 from jsonfield import JSONField
 
 from .exceptions import SchemaIsLockedError
@@ -74,6 +76,7 @@ class SchemaResponse(models.Model):
     """Response to question set"""
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, default=1) # admin
 
     qa_set = JSONField()
 

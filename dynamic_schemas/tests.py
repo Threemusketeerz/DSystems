@@ -2,6 +2,7 @@ from django.test import TestCase, Client, RequestFactory
 from django.db import IntegrityError 
 from django.shortcuts import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 from . import views
 from .forms import SchemaResponseForm, ResponseUpdateForm
@@ -255,8 +256,18 @@ class ResponseFormUpdateTests(TestCase):
 """ VIEWS TESTS """
 class ViewTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create(
+            username='tuser', password='top_secret')
         self.c = Client()
+
+        # Force the login, since we're not testing login
+        self.c.force_login(self.user)
+
         self.factory = RequestFactory()
+        self.factory.user = self.user
+
+    def tearDown(self):
+        self.c.logout()
 
     def test_index_status_code_return_200(self):
         url = reverse('dynamic_schemas:schema_list')
@@ -306,6 +317,8 @@ class ViewTests(TestCase):
         url = reverse('dynamic_schemas:schema_view', kwargs={'pk': 1})
 
         request = self.factory.get(url)
+        request.user = self.user
+        # __import__('ipdb').set_trace()
         response = views.SchemaView.as_view()(request, 1)
 
         # Fetch date after .make_date_readable.

@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 from .models import Schema, SchemaQuestion, SchemaResponse
 
@@ -8,7 +9,9 @@ from .models import Schema, SchemaQuestion, SchemaResponse
 class SchemaResponseForm(forms.Form):
 
     def __init__(self, schema, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
+        
         self.schema_questions = schema.schemaquestion_set.all()
         self.schema = schema
         for question in self.schema_questions:
@@ -30,11 +33,17 @@ class SchemaResponseForm(forms.Form):
                     ),
                 )
 
+        # Do I really need to pass this?
         self.fields['schema'] = forms.CharField(
             initial=schema.name,
             widget=forms.HiddenInput(),
             required=True
         )
+        # self.fields['user'] = forms.CharField(
+            # initial=user.username,
+            # widget=forms.HiddenInput(),
+            # required=True
+        # )
 
     def save(self, commit=True, *args, **kwargs):
         # This assumes .is_valid is checked first.
@@ -42,13 +51,22 @@ class SchemaResponseForm(forms.Form):
             # We remove the schema from the dict itself, it gets passed to
             # schema attr on object instead
 
-            SchemaResponse.objects.create(
+            # instance = SchemaResponse.objects.create(
+                # schema = self.schema,
+                # qa_set = self.cleaned_data,
+            # )
+            instance = SchemaResponse(
                 schema = self.schema,
                 qa_set = self.cleaned_data,
             )
 
-        else:
-            return ValidationError("NOT VALID")
+            if commit:
+                instance.save()
+
+        return instance
+
+        # else:
+            # return ValidationError("NOT VALID")
 
 
 class ResponseUpdateForm(forms.Form):

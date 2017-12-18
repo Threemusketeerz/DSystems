@@ -13,6 +13,7 @@
                 src="{% static 'dynamic_schemas/js/main.js' %}"></script>
     </head>
     <body>
+        {% include 'dynamic_schemas/info-bar.html' %}
         <div class="content-container">
             {% block content %}
             {% endblock %}

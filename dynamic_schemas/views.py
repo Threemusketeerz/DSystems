@@ -2,6 +2,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect, reverse
 from django.views.generic import ListView 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -13,8 +14,8 @@ from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 
 
-# @login_required(login_url='/accounts/login/')
-class SchemaIndexView(ListView):
+class SchemaIndexView(LoginRequiredMixin, ListView):
+    # login_url = '/accounts/login.html/'
     template_name = 'dynamic_schemas/index.html'
     context_object_name = 'all_schemas'
 
@@ -30,7 +31,7 @@ class SchemaIndexView(ListView):
         # return SchemaQuestion.objects.filter(rel_schema=schema_instance)
 
 
-# @login_required
+@login_required
 def form_view(request, pk):
     schema = Schema.objects.get(pk=pk)
 
@@ -40,19 +41,25 @@ def form_view(request, pk):
         if form.is_valid():
             # This removes schema from qa_set only.
             del form.cleaned_data['schema']
+            # del form.cleaned_data['user']
 
-            form.save()
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            
+            # __import__('ipdb').set_trace()
             
             # TODO Write tests for this. 
             return redirect(reverse('dynamic_schemas:schema_view',
                                     kwargs={'pk': pk}))
     else:
         form = SchemaResponseForm(schema)
+        # __import__('ipdb').set_trace()
 
     return render(request, f'dynamic_schemas/create.html', {'form': form})
 
 
-# @login_required
+@login_required
 def form_update_view(request, pk, r_pk):
     schema = Schema.objects.get(pk=pk)
     instance = SchemaResponse.objects.get(schema=schema, pk=r_pk)
@@ -67,6 +74,7 @@ def form_update_view(request, pk, r_pk):
         form = ResponseUpdateForm(instance, pk, request.POST or None)
         if form.is_valid():
 
+            # form.user = request.user
             form.update()
             # __import__('ipdb').set_trace()
             
@@ -76,8 +84,7 @@ def form_update_view(request, pk, r_pk):
 
 
 """ API Views """
-# @login_required
-class ResponseList(APIView):
+class ResponseList(LoginRequiredMixin, APIView):
 
     """
     Lists responses according to schema.
@@ -92,8 +99,7 @@ class ResponseList(APIView):
         return Response(serializer.data)
 
 
-# @login_required
-class SchemaView(APIView):
+class SchemaView(LoginRequiredMixin, APIView):
 
     """
     Fetches the FIRST object from ResponseList. Makes it availabe for
@@ -152,3 +158,4 @@ class SchemaView(APIView):
         return Response(data)
 
 
+""" User Authentication Views """
