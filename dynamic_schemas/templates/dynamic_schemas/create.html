@@ -13,8 +13,6 @@
     <body>
         {% include 'dynamic_schemas/info-bar.html' %}
         <div class="form-container">
-            <a class="btn btn-lg btn-primary"
-               href="{% url 'dynamic_schemas:schema_list' %}">OVERSIGT</a>
             <form class="form-box" action="" method="POST" >
                 {% csrf_token %}
                 {% if form %}

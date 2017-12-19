@@ -9,6 +9,28 @@
             </a>
         </div>
         <ul class="nav navbar-nav navbar-right">
+            {% if schema %}
+            {% if schema.is_active %}
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown"
+                                           aria-expanded="true" href="#">
+                    Instruktioner
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% if help_urls %}
+                        {% for link in help_urls %}
+                        <li><a href="{{ link.url }}" 
+                               id="btn{{ forloop.counter }}">
+                                {{ link.link_name }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </li>
+            {% endif %}
+            {% endif %}
             <li>
                 <a href="#">
                     <span class="glyphicon glyphicon-user"> </span>

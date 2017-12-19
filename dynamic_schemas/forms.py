@@ -91,21 +91,22 @@ class ResponseUpdateForm(forms.Form):
                         )
         # self.pk = pk
     
-        for q, a in instance.qa_set.items():
-            queried_q = SchemaQuestion.objects.get(schema=self.schema, text=q)
+        for qstn, ansr in instance.qa_set.items():
+            queried_q = SchemaQuestion.objects.get(schema=self.schema,
+                                                   text=qstn)
 
             # If is_response_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
             if queried_q.is_response_bool:
                 if queried_q.is_editable \
-                and a is 'Ingenting':
-                    self.fields[q] = forms.ChoiceField(
+                and ansr == 'Ingenting':
+                    self.fields[qstn] = forms.ChoiceField(
                         choices=SELECT_CHOICES,
                         widget=self.c_widget
                         
                     )
-                    # self.fields[q] = forms.NullBooleanField(
-                        # required=False,
+                    self.fields[qstn].widget.attrs['readonly'] = False
+                    # self.fields[q] = forms.NullBooleanField( # required=False,
                         # initial=a,
                         # widget=forms.TextInput(
                             # attrs={
@@ -117,10 +118,11 @@ class ResponseUpdateForm(forms.Form):
                     # )
 
                 else:
-                    self.fields[q] = forms.ChoiceField(
+                    self.fields[qstn] = forms.ChoiceField(
                         choices=SELECT_CHOICES,
                         widget=self.c_widget
                     )
+                    self.fields[qstn].widget.attrs['readonly'] = True
                     # self.fields[q].initial = a
                     # self.fields[q] = forms.NullBooleanField(
                         # required=False,
@@ -132,23 +134,23 @@ class ResponseUpdateForm(forms.Form):
                             # }
                         # )
                     # )
-                    self.fields[q].initial = a
+                    self.fields[qstn].initial = ansr
 
-            elif not queried_q.is_editable or a != '':
-                self.fields[q] = forms.CharField(
+            elif not queried_q.is_editable or ansr != '':
+                self.fields[qstn] = forms.CharField(
                     required=False,
                     max_length=100,
-                    initial=a,
+                    initial=ansr,
                     widget=forms.TextInput(
                         attrs={'class':'form-control', 'readonly': True}
                     )
                 )
                 
             else:
-                self.fields[q] = forms.CharField(
+                self.fields[qstn] = forms.CharField(
                     required=False,
                     max_length=100,
-                    initial=a, # Should be empty '' else remove this field
+                    initial=ansr, # Should be empty '' else remove this field
                     widget=forms.TextInput(
                         attrs={'class': 'form-control'}
                     )
@@ -172,11 +174,11 @@ class ResponseUpdateForm(forms.Form):
         # fetch_questions.append(self.schema.name)
 
         # Keeping this for now, as long as it doesnt cause trouble
-        for q in self.data:
-            if q not in fetch_questions \
-            and q != 'csrfmiddlewaretoken':
+        for qstn in self.data:
+            if qstn not in fetch_questions \
+            and qstn != 'csrfmiddlewaretoken':
                 try:
-                    raise AttributeError(f'{q} is in your imagination')
+                    raise AttributeError(f'{qstn} is in your imagination')
                 finally:
                     return False
 

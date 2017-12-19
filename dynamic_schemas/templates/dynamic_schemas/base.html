@@ -2,12 +2,21 @@
 <html>
     <head>
         <link rel="icon" 
-              href="{% static 'dynamic_schemas/icons/ren_ico.png' %}">
+              href="{% static 'dynamic_schemas/icons/ren_ico.png' %}" />
+        <link rel="stylesheet"
+              href="{% static 'dynamic_schemas/css/style.css' %}" />
 
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/jq-3.2.1/dt-1.10.16/b-1.4.2/kt-2.3.2/r-2.2.0/sl-1.2.3/datatables.min.css"/>
+		<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.7/jq-3.2.1/dt-1.10.16/b-1.4.2/kt-2.3.2/r-2.2.0/sl-1.2.3/datatables.min.css"/>-->
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.css"/>
 
-		<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/jq-3.2.1/dt-1.10.16/b-1.4.2/kt-2.3.2/r-2.2.0/sl-1.2.3/datatables.min.js"></script>
+
+       <script
+		  src="https://code.jquery.com/jquery-3.2.1.min.js"
+		  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		  crossorigin="anonymous"></script> 
+		<!--<script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.7/jq-3.2.1/dt-1.10.16/b-1.4.2/kt-2.3.2/r-2.2.0/sl-1.2.3/datatables.min.js"></script>-->
+		<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.js"></script>
         <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script type="text/javascript" 
                 src="{% static 'dynamic_schemas/js/main.js' %}"></script>

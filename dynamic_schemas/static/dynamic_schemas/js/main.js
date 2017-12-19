@@ -31,12 +31,11 @@ $(document).ready(function() {
             "columnDefs": [{
                 // Renders glyphicons if boolean true or false.
                 "render": function(data, type, row, meta){
-                    if(typeof data === "boolean"){
-                        if (data === 'True')
-                            return "<span class='glyphicon glyphicon-ok' style='font-size: 1.5em;'></span>";
-                        if(data === 'False')
-                            return "<span class='glyphicon glyphicon-remove' style='font-size: 1.5em'></span>";
-                    }
+                    
+                    if (data === 'Ja') 
+                        return "<span class='glyphicon glyphicon-ok' style='font-size: 1.5em;'></span>";
+                    if (data === 'Nej')
+                        return "<span class='glyphicon glyphicon-remove' style='font-size: 1.5em'></span>";
                     else        
                         return data;
                 },
