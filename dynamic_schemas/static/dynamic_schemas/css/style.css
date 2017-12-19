@@ -21,6 +21,15 @@ body {
     height: 20px;
 }
 
+.field-wrapper {
+    margin: 10px 0;
+}
+
+.login-header {
+    margin: -40px 0 40px;
+    text-align: center;
+}
+
 .header {
     color: white;
     background-color: #337AB7;

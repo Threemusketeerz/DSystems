@@ -75,21 +75,5 @@
 <h1> SKEMA ER TOMT! Tryk under for at lave første indtasting! </h1>
  <a class="btn btn-primary" href="{% url 'dynamic_schemas:create_form' pk=pk %}">Ny Indtastning</a>
 {% endif %}
-
-{% endblock %}
-{% block helpurls %}
-{% if schema.is_active %}
-    {% if help_urls %} 
-        <div id="helpfield-container">
-            <h4> Instruktioner! </h4>    
-            {% for link in help_urls%}
-            <a class="btn btn-primary" id="btn{{ forloop.counter }}"
-                                       href="{{ link.url }}">{{ link.link_name }}</a>
-            {% endfor %}
-        </div>
-    {% else %}
-    <p> Something went wrong </p>
-    {% endif %}
-{% endif %}
 {% endblock %}
 

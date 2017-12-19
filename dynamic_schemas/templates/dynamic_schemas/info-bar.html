@@ -20,7 +20,7 @@
                 <ul class="dropdown-menu">
                     {% if help_urls %}
                         {% for link in help_urls %}
-                        <li><a href="{{ link.url }}" 
+                        <li><a href="{{ link.url }}" target="_blank" 
                                id="btn{{ forloop.counter }}">
                                 {{ link.link_name }}
                             </a>

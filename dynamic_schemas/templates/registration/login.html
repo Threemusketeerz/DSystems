@@ -1,6 +1,29 @@
-<h2> Login </h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Log ind</button>
-</form>
+{% load static %}
+{% load login_extras %}
+<html>
+    <head>
+        <link rel="stylesheet" 
+              type="text/css"
+              href="{% static 'dynamic_schemas/css/style.css' %}" />
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <form class="form-box" method="post">
+                <div class="login-header">
+                    <h2> DaminoSystems Rengøring </h2>
+                </div>
+                {% csrf_token %}
+                <div class="field-wrapper">
+                    {{ form.username|set_placeholder:"Brugernavn" }}
+                </div>
+                <div class="field-wrapper">
+                    {{ form.password|set_placeholder:"Kodeord" }}
+                </div>
+                <button class="btn btn-default pull-right" type="submit">Log ind</button>
+            </form>
+        </div>
+    </body>
+</html>
