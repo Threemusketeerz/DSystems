@@ -155,8 +155,7 @@ class FormTests(TestCase):
 
 
     def test_response_data_is_valid(self):
-        data = {self.q1.text: 'a1', self.q2.text: 'a2', 
-                'schema': self.schema.name} 
+        data = {self.q1.text: 'a1', self.q2.text: 'a2',} 
 
         form = SchemaResponseForm(self.schema, data)
 
@@ -181,7 +180,7 @@ class FormTests(TestCase):
     def test_response_form_if_booleanfield_is_booleanfield(self):
         form = SchemaResponseForm(self.schema)
         self.assertEqual(str(form.fields[self.qb.text].__class__),
-                         "<class 'django.forms.fields.BooleanField'>")
+                         "<class 'django.forms.fields.ChoiceField'>")
 
 class ResponseFormUpdateTests(TestCase):
 
@@ -217,7 +216,7 @@ class ResponseFormUpdateTests(TestCase):
     def test_update_form_if_booleanfield_is_booleanfield(self):
         form = ResponseUpdateForm(self.response, pk=self.schema.id)
         self.assertEqual(str(form.fields[self.qb.text].__class__),
-                         "<class 'django.forms.fields.BooleanField'>")
+                         "<class 'django.forms.fields.ChoiceField'>")
 
     # def test_update_form_if_update_error_when_wrong_data(self):
 

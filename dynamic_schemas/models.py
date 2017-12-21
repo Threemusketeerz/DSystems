@@ -27,7 +27,8 @@ class Schema(models.Model):
     name = models.CharField(max_length=100,)
 
     help_field = models.ManyToManyField(SchemaHelpUrl,
-                                        verbose_name='Instruktions felt',)
+                                        verbose_name='Instruktions felt',
+                                        blank=True,)
     is_active = models.BooleanField(default=False,
                                     verbose_name='Aktivt',)
     is_locked = models.BooleanField(default=False,
