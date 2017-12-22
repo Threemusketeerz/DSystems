@@ -29,6 +29,11 @@ class Schema(models.Model):
     help_field = models.ManyToManyField(SchemaHelpUrl,
                                         verbose_name='Instruktions felt',
                                         blank=True,)
+    actions = models.ManyToManyField(
+        SchemaMultipleChoice,
+        verbose_name='Handlinger',
+        blank=True,
+    )
     is_active = models.BooleanField(default=False,
                                     verbose_name='Aktivt',)
     is_locked = models.BooleanField(default=False,
@@ -95,3 +100,5 @@ class SchemaMultipleChoice(models.Model):
     overflowing. """
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
+    choice_field = models.CharField(max_length=100, on_delete=models.CASCADE,)
+    

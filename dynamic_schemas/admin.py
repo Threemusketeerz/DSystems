@@ -38,7 +38,13 @@ class QuestionInline(admin.StackedInline):
     model = SchemaQuestion
     extra = 0
 
-
+class MultipleChoiceInline(admin.StackedInline):
+    fieldsets = [
+        (None, {
+            'fields': ('name')
+            }
+        )
+    ]
 
 class SchemaAdmin(admin.ModelAdmin):
     form = SchemaAdminForm
