@@ -90,3 +90,8 @@ class SchemaResponse(models.Model):
         return SchemaQuestion.objects.filter(schema=self.schema)
 
 
+class SchemaMultipleChoice(models.Model):
+    """ Multiple Select field. Use at substitute for columns if columns are
+    overflowing. """
+
+    schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)

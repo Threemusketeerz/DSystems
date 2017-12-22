@@ -7,3 +7,4 @@ dynamic_schemas/*.swp
 DaminoSystemsv4/
 .coverage
 htmlcov/
+newdumpsjson/
