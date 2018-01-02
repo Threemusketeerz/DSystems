@@ -7,9 +7,9 @@ from .models import Schema, SchemaQuestion, SchemaResponse
 
 # Rename ResponseForm
 SELECT_CHOICES = [ 
-    ('Ingenting','Ingenting'),
-    ('Ja','Ja'), 
+    ('------', '------'),
     ('Nej','Nej'), 
+    ('Ja','Ja'), 
 ]
 SELECT_LEN = len(SELECT_CHOICES)
 
@@ -30,18 +30,7 @@ class SchemaResponseForm(forms.Form):
                             'class': 'form-control'
                             }
                         )
-
                     )
-                # self.fields[question.text]=forms.NullBooleanField(
-                    # required=False,
-                    # widget=forms.TextInput(
-                        # attrs = {
-                            # 'class':'form-check-input',
-                            # 'type': 'checkbox',
-                        # }
-                    # ),
-                # )
-
             else:
                 self.fields[question.text] = forms.CharField(
                     max_length=200,
@@ -66,9 +55,6 @@ class SchemaResponseForm(forms.Form):
 
         return instance
 
-        # else:
-            # return ValidationError("NOT VALID")
-
 
 class ResponseUpdateForm(forms.Form):
 
@@ -78,8 +64,6 @@ class ResponseUpdateForm(forms.Form):
     
     def __init__(self, instance, pk, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # schema_questions = instance.get_questions
-        # __import__('ipdb').set_trace()
 
         self.instance = instance 
         self.schema = Schema.objects.get(pk=pk)
@@ -89,7 +73,6 @@ class ResponseUpdateForm(forms.Form):
                                 'class': 'form-control'
                             }
                         )
-        # self.pk = pk
     
         for qstn, ansr in instance.qa_set.items():
             queried_q = SchemaQuestion.objects.get(schema=self.schema,
@@ -106,16 +89,6 @@ class ResponseUpdateForm(forms.Form):
                         
                     )
                     self.fields[qstn].widget.attrs['readonly'] = False
-                    # self.fields[q] = forms.NullBooleanField( # required=False,
-                        # initial=a,
-                        # widget=forms.TextInput(
-                            # attrs={
-                                # 'class':'form-check-input',
-                                # 'type': 'checkbox',
-                                # 'indeterminate': True,
-                            # }
-                        # )
-                    # )
 
                 else:
                     self.fields[qstn] = forms.ChoiceField(
@@ -123,17 +96,7 @@ class ResponseUpdateForm(forms.Form):
                         widget=self.c_widget
                     )
                     self.fields[qstn].widget.attrs['readonly'] = True
-                    # self.fields[q].initial = a
-                    # self.fields[q] = forms.NullBooleanField(
-                        # required=False,
-                        # widget=forms.TextInput(
-                            # attrs={
-                                # 'class':'form-check-input',
-                                # 'type': 'checkbox',
-                                # 'disabled': True,
-                            # }
-                        # )
-                    # )
+
                     self.fields[qstn].initial = ansr
 
             elif not queried_q.is_editable or ansr != '':
@@ -156,14 +119,7 @@ class ResponseUpdateForm(forms.Form):
                     )
                 )
 
-        # self.fields['schema'] = forms.CharField(
-            # initial=instance.schema.name,
-            # widget=forms.HiddenInput(),
-            # required=True
-        # )
-
     def is_valid(self):
-
         # Parent validation first, get cleaned data.
         valid = super().is_valid()
 
@@ -183,12 +139,6 @@ class ResponseUpdateForm(forms.Form):
                     return False
 
         return True
-        
-        # questions = SchemaQuestion.objects.filter(schema=self.schema)
-
-        # list_to_comp = [q for q in cleaned_data]
-        # q_to_comp = [q.text for q in questions] 
-
 
     def update(self, *args, **kwargs):
         if self.cleaned_data:

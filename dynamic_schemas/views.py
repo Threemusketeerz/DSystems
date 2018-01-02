@@ -22,14 +22,6 @@ class SchemaIndexView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Schema.objects.all()
 
-# class SchemaView(ListView):
-    # template_name = 'dynamic_schemas/schema.html'
-    # context_object_name = 'schema'
-
-    # def get_queryset(self, *args, **kwargs):
-        # schema_instance = Schema.objects.get(pk=self.kwargs['pk'])
-        # return SchemaQuestion.objects.filter(rel_schema=schema_instance)
-
 
 @login_required
 def form_view(request, pk):
@@ -56,21 +48,13 @@ def form_view(request, pk):
 def form_update_view(request, pk, r_pk):
     schema = Schema.objects.get(pk=pk)
     instance = SchemaResponse.objects.get(schema=schema, pk=r_pk)
-    
 
-    # if request.method == 'GET':
     form = ResponseUpdateForm(instance, pk)
-        # return render(request, f'dynamic_schemas/update.html', {'form_update': form})
-
 
     if request.method == 'POST':
         form = ResponseUpdateForm(instance, pk, request.POST or None)
         if form.is_valid():
-
-            # form.user = request.user
             form.update()
-            # __import__('ipdb').set_trace()
-            
             return redirect(f'/dynamic_schemas/{pk}')
         
     return render(request, f'dynamic_schemas/update.html', {'form_update': form})
@@ -126,8 +110,6 @@ class SchemaView(LoginRequiredMixin, APIView):
                 single_response = all_responses.first()
                 serializer = SchemaResponseSerializer(single_response)
                 return serializer.data
-            # else:
-                # pass
 
         except single_response.DoesNotExist:
             raise Http404
@@ -149,6 +131,3 @@ class SchemaView(LoginRequiredMixin, APIView):
 
         # __import__('ipdb').set_trace()
         return Response(data)
-
-
-""" User Authentication Views """
