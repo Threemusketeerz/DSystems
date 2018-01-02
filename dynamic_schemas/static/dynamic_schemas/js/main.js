@@ -101,6 +101,7 @@ $(document).ready(function() {
                 // do something with the ID of the selected items
             }
         } );
+        table.column(0).visible(false)
     }).done(function() {
         console.log(performance.now() + ' TableCreation done')
         //var end = performance.now();
