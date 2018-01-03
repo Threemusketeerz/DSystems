@@ -26,4 +26,3 @@ def get_full_user_name(user_id):
         return full_name
     else:
         return username
-

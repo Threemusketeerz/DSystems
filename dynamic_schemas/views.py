@@ -13,6 +13,7 @@ from .models import Schema, SchemaQuestion, SchemaResponse
 from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 
+import pytz
 
 class SchemaIndexView(LoginRequiredMixin, ListView):
     # login_url = '/accounts/login.html/'
@@ -88,15 +89,30 @@ class SchemaView(LoginRequiredMixin, APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'dynamic_schemas/schema.html'
 
-    def make_date_readable(self, instances):
+    def _make_date_tz(self, instance=None, tz=None):
+        # Can this be moved to SETTINGS instead? Same for _make_date_readable.
+        # Problem is probably that the UTC format gets overridden.
+        if instance:
+            if tz:
+                tz = pytz.timezone(tz)
+            return instance.pub_date.astimezone(tz)
+        return
+
+    def _make_date_readable(self, instances):
         """ 
         Helper function to change the dates to a format pleasing to the
         eyes, takes a bundle of instances and converts their time.
+        How extensible do we want this?
+        Function is kept private for now, since in Denmark the timezone is CET.
         """
 		
         for instance in instances:
-            instance.pub_date = instance.pub_date \
-                    .strftime('%Y:%m:%d %H:%M:%S')
+            inst_as_cet = self._make_date_tz(
+                    instance=instance, 
+                    tz='Europe/Copenhagen'
+                    )
+            instance.pub_date = inst_as_cet \
+                    .strftime('%Y-%m-%d %H:%M:%S')
 
         return instances
 
@@ -119,7 +135,7 @@ class SchemaView(LoginRequiredMixin, APIView):
         schema_help_urls = schema.help_field.all()
 
         all_responses = SchemaResponse.objects.filter(schema=schema) 
-        self.make_date_readable(all_responses)
+        self._make_date_readable(all_responses)
 
         serializer = SchemaResponseSerializer(all_responses, many=True)
 

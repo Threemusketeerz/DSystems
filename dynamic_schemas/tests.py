@@ -155,7 +155,7 @@ class FormTests(TestCase):
 
 
     def test_response_data_is_valid(self):
-        data = {self.q1.text: 'a1', self.q2.text: 'a2',} 
+        data = {self.q1.text: 'a1', self.q2.text: 'a2', self.qb.text: 'Ja'} 
 
         form = SchemaResponseForm(self.schema, data)
 
@@ -305,7 +305,7 @@ class ViewTests(TestCase):
         self.assertNotEqual(self.c.get(url).status_code, 404)
 
     
-    def test_SchemaView_make_date_readable_returns_readable(self):
+    def test_SchemaView_make_date_readable_not_equal_unreadable(self):
         # TODO Create global time format. In settings preferably.
         schema = Schema.objects.create(name='test')
         schema_q = SchemaQuestion.objects.create(text='q1', schema=schema)
