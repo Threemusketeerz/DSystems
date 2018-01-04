@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
 
-from .models import Schema, SchemaQuestion, SchemaResponse
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
 from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 
@@ -27,6 +27,7 @@ class SchemaIndexView(LoginRequiredMixin, ListView):
 @login_required
 def form_view(request, pk):
     schema = Schema.objects.get(pk=pk)
+    help_urls = schema.help_field.all()
 
     if request.method == 'POST':
         form = SchemaResponseForm(schema, request.POST)
@@ -42,7 +43,12 @@ def form_view(request, pk):
     else:
         form = SchemaResponseForm(schema)
 
-    return render(request, f'dynamic_schemas/create.html', {'form': form})
+    return render(request, f'dynamic_schemas/create.html', \
+        {
+        'form': form,
+        'schema': schema,
+        'help_urls': help_urls,
+        })
 
 
 @login_required
@@ -134,7 +140,7 @@ class SchemaView(LoginRequiredMixin, APIView):
         try:
             schema = Schema.objects.get(pk=pk)
 
-            if SchemaQuestion.objects.filter(schema=schema).count() != 0:
+            if SchemaColumn.objects.filter(schema=schema).count() != 0:
                 all_responses = SchemaResponse.objects.filter(schema=schema) 
                 single_response = all_responses.first()
                 serializer = SchemaResponseSerializer(single_response)

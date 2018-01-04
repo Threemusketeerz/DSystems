@@ -3,7 +3,7 @@ from django.forms import ModelMultipleChoiceField
 from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from .models import Schema, SchemaQuestion, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaHelpUrl
 
 # Register your models here.
 class SchemaAdminForm(forms.ModelForm):
@@ -33,11 +33,11 @@ class QuestionInline(admin.StackedInline):
         ),
         (None, {
             'classes': ('radio',),
-            'fields': ('is_response_bool', 'is_editable',),
+            'fields': ('is_bool', 'is_editable',),
             }
         ),
     ]
-    model = SchemaQuestion
+    model = SchemaColumn
     extra = 0
 
 

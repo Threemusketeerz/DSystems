@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from .models import Schema, SchemaQuestion, SchemaResponse, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
 
 
 # Rename ResponseForm
@@ -22,14 +22,14 @@ class SchemaResponseForm(forms.Form):
         super().__init__(*args, **kwargs)
         
         self.schema = schema
-        self.schema_questions = schema.schemaquestion_set.all()
+        self.schema_questions = schema.schemacolumn_set.all()
         
-        self.URLS = self.schema.help_field.values_list('id', 'link_name')
+        self.URLS = self.schema.help_field.values_list('id', 'name')
         # import ipdb; ipdb.set_trace()
         # self.schema_urls = schema.schemahelpurl_set.all()
         # import ipdb; ipdb.set_trace()
         for question in self.schema_questions:
-            if question.is_response_bool:
+            if question.is_bool:
                     self.fields[question.text] = forms.ChoiceField(
                         choices=SELECT_CHOICES,
                         widget=forms.Select(
@@ -82,19 +82,19 @@ class ResponseUpdateForm(forms.Form):
 
         self.instance = instance 
         self.schema = Schema.objects.get(pk=pk)
-        self.schema_questions = self.schema.schemaquestion_set.all()
+        self.schema_questions = self.schema.schemacolumn_set.all()
         self.c_widget = forms.Select(
             attrs={
                 'class': 'form-control'
                 })
     
         for qstn, ansr in instance.qa_set.items():
-            queried_q = SchemaQuestion.objects.get(schema=self.schema,
+            queried_q = SchemaColumn.objects.get(schema=self.schema,
                                                    text=qstn)
 
-            # If is_response_bool, we don't want it to be editable untill
+            # If is_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
-            if queried_q.is_response_bool:
+            if queried_q.is_bool:
                 if queried_q.is_editable \
                 and ansr == 'Ingenting':
                     self.fields[qstn] = forms.ChoiceField(

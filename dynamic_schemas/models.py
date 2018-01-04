@@ -13,11 +13,11 @@ class SchemaHelpUrl(models.Model):
     will contain urls referencing links connected to the schema."""
 
     url = models.URLField()
-    link_name = models.CharField(max_length=50,)
+    name = models.CharField(max_length=50,)
     help_text = models.TextField(default='',)
 
     def __str__(self):
-        return self.link_name
+        return self.name
 
 
 class Schema(models.Model):
@@ -40,13 +40,13 @@ class Schema(models.Model):
         return self.name
 
 
-class SchemaQuestion(models.Model):
+class SchemaColumn(models.Model):
 
     """Question for schema"""
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
     text = models.CharField(max_length=100,)
-    is_response_bool = models.BooleanField(default=False,
+    is_bool = models.BooleanField(default=False,
                                            verbose_name='Ja/Nej spørgsmål',)
     is_editable = models.BooleanField(default=False,
                                       verbose_name='Felt kan ændres',)
@@ -93,6 +93,5 @@ class SchemaResponse(models.Model):
         return f'{self.id}'
 
     def get_questions(self):
-        return SchemaQuestion.objects.filter(schema=self.schema)
-
+        return SchemaColumn.objects.filter(schema=self.schema)
 

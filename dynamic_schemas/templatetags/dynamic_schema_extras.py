@@ -10,9 +10,10 @@ register = template.Library()
 
 @register.filter
 def is_a_checkbox(field):
-    if field.subwidgets[0].data['type'] == 'checkbox':
-        return True
-    return False 
+    if len(field.subwidgets) > 0:
+        if field.subwidgets[0].data['type'] == 'checkbox':
+            return True
+        return False 
 
 @register.filter
 def load_json(data):
@@ -35,5 +36,5 @@ def get_link(link_id):
 
 @register.filter
 def get_link_name(link_id):
-    return SchemaHelpUrl.objects.get(pk=int(link_id)).link_name
+    return SchemaHelpUrl.objects.get(pk=int(link_id)).name
 
