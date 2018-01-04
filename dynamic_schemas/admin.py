@@ -1,10 +1,13 @@
 from django import forms
+from django.forms import ModelMultipleChoiceField
 from django.contrib import admin
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from .models import Schema, SchemaQuestion, SchemaHelpUrl
 
 # Register your models here.
 class SchemaAdminForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         # We want default behavior, so calling __init__ first to fetch attrs
         super().__init__(*args, **kwargs) 
@@ -47,6 +50,8 @@ class SchemaAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'help_field', 'is_active', 'is_locked']}),
     ]
+    filter_horizontal = ('help_field',)
+
     inlines = [QuestionInline]
 
 
