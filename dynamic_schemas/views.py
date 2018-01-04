@@ -84,12 +84,25 @@ class SchemaView(LoginRequiredMixin, APIView):
     as a template for the table in schema.html
 
     Excludes schema.id, and the placeholder qa_set in the template.
+
     """
 
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'dynamic_schemas/schema.html'
 
     def _make_date_tz(self, instance=None, tz=None):
+        """ Takes an instance, and sets its timezone. 
+        
+            usage:
+            THIS IS BROKEN
+            >>> import datetime
+            >>> dt = datetime.datetime(2000, 12, 31, 14, 0)
+            >>> str(dt)
+            '2000-12-31 14:00:00'
+            >>> denmark_tz = _make_date_tz(instance=dt, tz='Europe/Copenhagen')
+            >>> str(denmark_tz)
+            '2000-12-31 14:50:00+0500'
+        """
         # Can this be moved to SETTINGS instead? Same for _make_date_readable.
         # Problem is probably that the UTC format gets overridden.
         if instance:

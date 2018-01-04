@@ -1,6 +1,8 @@
 from django import template
 from django.contrib.auth.models import User
 
+from dynamic_schemas.models import SchemaHelpUrl
+
 import json
 import ast
 
@@ -26,3 +28,12 @@ def get_full_user_name(user_id):
         return full_name
     else:
         return username
+
+@register.filter
+def get_link(link_id):
+    return SchemaHelpUrl.objects.get(pk=int(link_id)).url
+
+@register.filter
+def get_link_name(link_id):
+    return SchemaHelpUrl.objects.get(pk=int(link_id)).link_name
+

@@ -26,7 +26,7 @@ $(document).ready(function() {
 
         var table = $("#dataTable").DataTable({
             //"data": dataFile,
-			"serverside": true,
+            "serverside": true,
 			"processing": true,
             "columnDefs": [{
                 // Renders glyphicons if boolean true or false.

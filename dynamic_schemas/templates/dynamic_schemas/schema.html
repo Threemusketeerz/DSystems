@@ -37,6 +37,11 @@
                         </th>
                         {% endfor %}
                     {% endif %}
+                    {% if h == 'instruction' %}
+                        <th>
+                            Intruks
+                        </th>
+                    {% endif %}
                 {% endfor %}
             </tr>
         </thead>
@@ -44,27 +49,33 @@
             {% for row in all_responses %}
             <tr>
             {% for h, r in row.items %}
-                {% if h == 'id' %}
-                <td>
-                    {{ r }}
-                </td>
-                {% endif %}
                 {% if h == 'qa_set' %}
                     {% for key, value in r|load_json %}
                     <td>
-                    {{ value }}
+                        {{ value }}
                     </td>
                     {% endfor %}
-                {% endif %}
-                {% if h == 'pub_date' %}
-                <td>
-                    {{ r }}
-                </td>
+                {% elif h == 'user' %}
+                    <td>
+                        {{ r|get_full_user_name }}
+                    </td>
+                {% elif h == 'instruction' %}
+                    <td>
+                        <a href="{{ r|get_link }}" target="_blank">
+                            {{ r|get_link_name }}
+                        </a>
+                    </td>
+
+                {% elif h != 'schema' %}
+                    <td>
+                        {{ r }}
+                    </td>
+
                 {% endif %}
             {% endfor %}
-            <td>
-            {{ row.user|get_full_user_name }}
-            </td>
+            <!--<td>-->
+                <!--[> {{ row.user|get_full_user_name }} <]-->
+            <!--</td>-->
             </tr> 
             {% endfor %}
     </table>

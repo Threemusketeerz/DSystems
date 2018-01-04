@@ -82,6 +82,12 @@ class SchemaResponse(models.Model):
     qa_set = JSONField()
 
     pub_date = models.DateTimeField(auto_now_add=True,)
+    
+    instruction = models.ForeignKey(
+        SchemaHelpUrl, 
+        on_delete=models.PROTECT,
+        null=True,
+    )
 
     def __str__(self):
         return f'{self.id}'
