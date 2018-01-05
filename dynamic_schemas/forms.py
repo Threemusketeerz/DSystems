@@ -7,10 +7,14 @@ from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
 
 
 # Rename ResponseForm
-SELECT_CHOICES = [ 
+SELECT_CHOICES_EDIT = [ 
     ('------', '------'),
     ('Nej','Nej'), 
     ('Ja','Ja'), 
+    ]
+SELECT_CHOICES = [
+    ('Nej', 'Nej'),
+    ('Ja', 'Ja'),
     ]
 SELECT_LEN = len(SELECT_CHOICES)
 
@@ -29,7 +33,14 @@ class SchemaResponseForm(forms.Form):
         # self.schema_urls = schema.schemahelpurl_set.all()
         # import ipdb; ipdb.set_trace()
         for question in self.schema_questions:
-            if question.is_bool:
+            if question.is_bool and question.is_editable:
+                    self.fields[question.text] = forms.ChoiceField(
+                        choices=SELECT_CHOICES_EDIT,
+                        widget=forms.Select(
+                            attrs={'class': 'form-control'}
+                            )
+                        )
+            elif question.is_bool and not question.is_editable:
                     self.fields[question.text] = forms.ChoiceField(
                         choices=SELECT_CHOICES,
                         widget=forms.Select(
@@ -96,19 +107,20 @@ class ResponseUpdateForm(forms.Form):
             # proper conditions have been setup for such a scenario.
             if queried_q.is_bool:
                 if queried_q.is_editable \
-                and ansr == 'Ingenting':
+                   and ansr == SELECT_CHOICES_EDIT[0][0]:
+                    # SELECT_CHOICES_EDIT[0][0] first tuple, first value
                     self.fields[qstn] = forms.ChoiceField(
-                        choices=SELECT_CHOICES,
+                        choices=SELECT_CHOICES_EDIT,
                         widget=self.c_widget
                         )
-                    self.fields[qstn].widget.attrs['readonly'] = False
+                    self.fields[qstn].widget.attrs['disabled'] = False
 
                 else:
                     self.fields[qstn] = forms.ChoiceField(
                         choices=SELECT_CHOICES,
                         widget=self.c_widget
                         )
-                    self.fields[qstn].widget.attrs['readonly'] = True
+                    self.fields[qstn].widget.attrs['disabled'] = True
 
                     self.fields[qstn].initial = ansr
 

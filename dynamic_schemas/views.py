@@ -56,6 +56,19 @@ def form_update_view(request, pk, r_pk):
     schema = Schema.objects.get(pk=pk)
     instance = SchemaResponse.objects.get(schema=schema, pk=r_pk)
 
+    columns = SchemaColumn.objects.filter(schema=schema)
+
+    ###################################################
+    # This little snippet checks if the responses can be edited. If they can
+    # the submit button will be provided. There is no restriction on
+    # has_been_edited, but since the data cant be saved we're good for now.
+    load_button = False
+    aggr_editables = [c.is_editable for c in columns]
+
+    if True in aggr_editables:
+        load_button = True
+    ###################################################
+
     form = ResponseUpdateForm(instance, pk)
 
     if request.method == 'POST':
@@ -64,7 +77,10 @@ def form_update_view(request, pk, r_pk):
             form.update()
             return redirect(f'/dynamic_schemas/{pk}')
         
-    return render(request, f'dynamic_schemas/update-form.html', {'form_update': form})
+    return render(request, f'dynamic_schemas/update-form.html', 
+            {'form_update': form,
+            'load_button': load_button}
+            )
 
 
 """ API Views """

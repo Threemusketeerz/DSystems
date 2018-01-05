@@ -7,23 +7,25 @@
             <!--<input type="hidden" name="_method" value="PUT"/>-->
             {% csrf_token %}
             {% if form_update %}
-            {% for field in form_update %} 
-            {% if field.is_hidden %} 
-            {{ field }}
-            {% elif field|is_a_checkbox %}
-            <div class="form-check">
-                <label class="form-check-label" for="id_{{ field.label }}"> 
-                    {{ field }}
-                    {{ field.label }}
-                </label>
-            </div>
-            {% else %}
-            {{ field.label_tag }}
-            {{ field }}
+                {% for field in form_update %} 
+                    {% if field.is_hidden %} 
+                        {{ field }}
+                    {% elif field|is_a_checkbox %}
+                    <div class="form-check">
+                        <label class="form-check-label" for="id_{{ field.label }}"> 
+                            {{ field }}
+                            {{ field.label }}
+                        </label>
+                    </div>
+                    {% else %}
+                        {{ field.label_tag }}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
             {% endif %}
-            {% endfor %}
+            {% if load_button %}
+                <input type="submit" value="GEM" class="btn btn-primary pull-right submit-btn"/>
             {% endif %}
-            <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
 {% endblock %}
