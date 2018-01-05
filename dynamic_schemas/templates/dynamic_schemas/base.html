@@ -2,31 +2,77 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <link rel="icon" 
               href="{% static 'dynamic_schemas/icons/ren_ico.png' %}" />
         <link rel="stylesheet"
               href="{% static 'dynamic_schemas/css/style.css' %}" />
 		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.css"/>
-
 
 		<script
 		  src="https://code.jquery.com/jquery-3.2.1.min.js"
 		  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 		  crossorigin="anonymous">
-		</script> 
-		<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.js"></script>
         <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script type="text/javascript" 
-                src="{% static 'dynamic_schemas/js/main.js' %}"></script>
+        {% block extraheads %}
+        {% endblock %}
     </head>
+
     <body>
-        {% include 'dynamic_schemas/info-bar.html' %}
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" 
+                       href="{% url 'dynamic_schemas:schema_list' %}">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        Damino Systems 
+                    </a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if schema %}
+                    {% if schema.is_active %}
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown"
+                                                   aria-expanded="true" href="#">
+                            Instruktioner
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if help_urls %}
+                                {% for link in help_urls %}
+                                <li><a href="{{ link.url }}" 
+                                       target="_blank" 
+                                       id="btn{{ forloop.counter }}">
+                                        {{ link.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                    <li>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-user"> </span>
+                            {{ request.user.username }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <span class="glyphicon glyphicon-log-out"></span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        {% block above_content %}{% endblock %}
         <div class="content-container">
             {% block content %}
             {% endblock %}
-            {% block helpurls %}
-            {% endblock %}
         </div>
-    </body> 
+        {% block below_content %}{% endblock %}
+    </body>
 </html>
