@@ -38,8 +38,8 @@ def form_view(request, pk):
             instance.user = request.user
             instance.save()
             
-            return redirect(reverse('dynamic_schemas:schema_view',
-                                    kwargs={'pk': pk}))
+        return redirect(reverse('dynamic_schemas:schema_view',
+                                kwargs={'pk': pk}))
     else:
         form = SchemaResponseForm(schema)
 
@@ -75,7 +75,8 @@ def form_update_view(request, pk, r_pk):
         form = ResponseUpdateForm(instance, pk, request.POST or None)
         if form.is_valid():
             form.update()
-            return redirect(f'/dynamic_schemas/{pk}')
+
+        return redirect(f'/dynamic_schemas/{pk}')
         
     return render(request, f'dynamic_schemas/update-form.html', 
             {'form_update': form,

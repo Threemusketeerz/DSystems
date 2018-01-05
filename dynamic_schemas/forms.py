@@ -95,9 +95,8 @@ class ResponseUpdateForm(forms.Form):
         self.schema = Schema.objects.get(pk=pk)
         self.schema_questions = self.schema.schemacolumn_set.all()
         self.c_widget = forms.Select(
-            attrs={
-                'class': 'form-control'
-                })
+            attrs={'class': 'form-control'},
+            )
     
         for qstn, ansr in instance.qa_set.items():
             queried_q = SchemaColumn.objects.get(schema=self.schema,
