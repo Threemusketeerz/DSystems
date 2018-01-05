@@ -43,7 +43,7 @@ def form_view(request, pk):
     else:
         form = SchemaResponseForm(schema)
 
-    return render(request, f'dynamic_schemas/create.html', \
+    return render(request, f'dynamic_schemas/create-form.html', \
         {
         'form': form,
         'schema': schema,
@@ -64,7 +64,7 @@ def form_update_view(request, pk, r_pk):
             form.update()
             return redirect(f'/dynamic_schemas/{pk}')
         
-    return render(request, f'dynamic_schemas/update.html', {'form_update': form})
+    return render(request, f'dynamic_schemas/update-form.html', {'form_update': form})
 
 
 """ API Views """
@@ -87,14 +87,14 @@ class SchemaView(LoginRequiredMixin, APIView):
 
     """
     Fetches the FIRST object from ResponseList. Makes it availabe for
-    as a template for the table in schema.html
+    as a template for the table in main.html
 
     Excludes schema.id, and the placeholder qa_set in the template.
 
     """
 
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'dynamic_schemas/schema.html'
+    template_name = 'dynamic_schemas/main.html'
 
     def _make_date_tz(self, instance=None, tz=None):
         """ Takes an instance, and sets its timezone. 
