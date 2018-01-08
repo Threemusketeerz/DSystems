@@ -66,7 +66,7 @@ $(document).ready(function() {
                 {
                 "text": "<- Tilbage",
                 "action": function(e, dt, node, config){
-                    var overview_link =  '/dynamic_schemas/';
+                    var overview_link =  '/rengoering/';
                     window.location.replace(overview_link);
                     }
                 },

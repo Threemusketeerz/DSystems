@@ -28,12 +28,7 @@ class SchemaAdminForm(forms.ModelForm):
 class QuestionInline(admin.StackedInline):
     fieldsets = [         
         (None, {
-            'fields': ('text',),
-            }
-        ),
-        (None, {
-            'classes': ('radio',),
-            'fields': ('is_bool', 'is_editable',),
+            'fields': ('text', 'is_bool', 'is_editable',),
             }
         ),
     ]
@@ -54,6 +49,7 @@ class SchemaAdmin(admin.ModelAdmin):
 
     inlines = [QuestionInline]
 
+admin.site.site_url = '/rengoering/'
 
 admin.site.register(Schema, SchemaAdmin)
 admin.site.register(SchemaHelpUrl)

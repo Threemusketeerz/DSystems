@@ -1,5 +1,9 @@
 body {
-    background-color: rgb(230, 240, 255)!important;
+    background-color: rgb(229, 240, 255)!important;
+}
+
+.dropdown-toggle:hover {
+   cursor: pointer; 
 }
 
 .glyphicon-ok {
@@ -66,4 +70,8 @@ body {
     margin: 10px 0;
 	display: block;
 	width: 100%;
+}
+
+#dataTable {
+    font-size: 12px!important;
 }

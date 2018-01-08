@@ -7,7 +7,7 @@
                 <h2> Rengørings skemaer </h2>
                 {% for schema in all_schemas %}
                     {% if schema.is_active %}
-                    <a href="/dynamic_schemas/{{schema.id}}/">
+                    <a href="{% url 'dynamic_schemas:schema_view' schema.id %}">
                         <button id="menu-btn" class="btn btn-primary">{{schema.name}}</button>
                     </a>
                     {% endif %}

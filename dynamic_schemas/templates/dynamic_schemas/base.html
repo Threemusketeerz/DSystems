@@ -32,6 +32,9 @@
                     </a>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="depr-schema">
+                        <a href="http://10.22.1.15/hjemmeside/hjemmeside.html"> DET GAMLE SKEMA </a>
+                    </li>
                     {% if schema %}
                     {% if schema.is_active %}
                     <li class="dropdown">
@@ -56,7 +59,7 @@
                     {% endif %}
                     {% endif %}
                     <li>
-                        <a>
+                        <a {% if request.user.is_superuser %}href="{% url 'admin:index' %}"{% endif %}>
                             <span class="glyphicon glyphicon-user"> </span>
                             {{ request.user.username }}
                         </a>

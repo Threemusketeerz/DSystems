@@ -15,6 +15,10 @@
                 <div class="login-header">
                     <h2> DaminoSystems Rengøring </h2>
                 </div>
+                <div class="help-text">
+                    <p style="color: lightgrey"> Dit login er det samme som på IPW/BDKLS </p>
+                </div>
+
                 {% csrf_token %}
                 <div class="field-wrapper">
                     {{ form.username|set_placeholder:"Brugernavn" }}
