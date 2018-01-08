@@ -77,17 +77,18 @@ class SchemaResponse(models.Model):
     """Response to question set"""
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
-    user = models.ForeignKey(User, on_delete=models.PROTECT, default=1) # admin
 
     qa_set = JSONField()
 
-    pub_date = models.DateTimeField(auto_now_add=True,)
-    
     instruction = models.ForeignKey(
         SchemaHelpUrl, 
         on_delete=models.PROTECT,
         null=True,
     )
+
+    user = models.ForeignKey(User, on_delete=models.PROTECT, default=1) # admin
+    pub_date = models.DateTimeField(auto_now_add=True,)
+    
 
     def __str__(self):
         return f'{self.id}'

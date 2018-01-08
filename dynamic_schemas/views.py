@@ -76,7 +76,8 @@ def form_update_view(request, pk, r_pk):
         if form.is_valid():
             form.update()
 
-        return redirect(f'/dynamic_schemas/{pk}')
+        return redirect(reverse('dynamic_schemas:schema_view',
+                                kwargs={'pk': pk}))
         
     return render(request, f'dynamic_schemas/update-form.html', 
             {'form_update': form,
@@ -116,6 +117,10 @@ class SchemaView(LoginRequiredMixin, APIView):
     def _make_date_tz(self, instance=None, tz=None):
         """ Takes an instance, and sets its timezone. 
         
+            TODO: 
+            Should this be a classmethod? Will a classmethod complicate the
+            view in its context?
+
             usage:
             THIS IS BROKEN
             >>> import datetime

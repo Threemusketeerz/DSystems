@@ -2,11 +2,12 @@
 {% load static %}
 {% load dynamic_schema_extras %}
 {% block extraheads %}
-		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.css"/>
+        <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.css"/>-->
+        <link rel="stylesheet" type="text/css" href="{% static 'dynamic_schemas/dependencies/dt/datatables.min.css' %}">
 
-		<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.js"></script>
-        <script type="text/javascript" 
-                src="{% static 'dynamic_schemas/js/main.js' %}"></script>
+        <!--<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/b-1.5.0/r-2.2.1/sl-1.2.4/datatables.min.js"></script>-->
+        <script type="text/javascript" src="{% static 'dynamic_schemas/dependencies/dt/datatables.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dynamic_schemas/js/main.js' %}"></script>
 {% endblock %}
 
 {% block content %}
