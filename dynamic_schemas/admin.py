@@ -40,10 +40,23 @@ class QuestionInline(admin.StackedInline):
 class SchemaAdmin(admin.ModelAdmin):
     form = SchemaAdminForm
     save_on_top = True
-    list_display = ('name', 'is_active', 'is_locked')
-    list_filter = ('is_active', 'is_locked')
+    list_display = (
+        'name', 'is_active', 'is_locked', 'date_created',
+        'date_modified', 'date_obsolete',
+        )
+
+    list_filter = (
+        'is_active', 'is_locked', 'date_created',
+        'date_modified', 'date_obsolete',
+        )
+
     fieldsets = [
-        (None, {'fields': ['name', 'help_field', 'is_active', 'is_locked']}),
+        (None, {'fields': [
+                'name', 'help_field', 'is_active', 'is_locked', 
+                'is_obsolete',
+                ]
+            }
+        ),
     ]
     filter_horizontal = ('help_field',)
 

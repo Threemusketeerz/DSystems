@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 from jsonfield import JSONField
@@ -26,18 +27,61 @@ class Schema(models.Model):
 
     name = models.CharField(max_length=100,)
 
-    help_field = models.ManyToManyField(SchemaHelpUrl,
-                                        verbose_name='Instruktions felt',
-                                        blank=True,)
-    is_active = models.BooleanField(default=False,
-                                    verbose_name='Aktivt',)
-    is_locked = models.BooleanField(default=False,
-                                    verbose_name='Lås',
-                                    help_text='Hvis du låser kan du ikke ændre'
-                                    ' tabellen i fremtiden.')
+    help_field = models.ManyToManyField(
+        SchemaHelpUrl,
+        verbose_name='Instruktions felt',
+        blank=True,
+        )
+
+    is_active = models.BooleanField(
+        default=False,
+        verbose_name='Aktivt',
+        help_text='Om tabellen skal vises',
+        )
+
+    is_locked = models.BooleanField(
+        default=False,
+        verbose_name='Lås',
+        help_text='Hvis du låser kan du ikke ændre kolonnerne'
+        ' i fremtiden. Du LÅSER kolonnerne.',
+        )
+
+    is_obsolete = models.BooleanField(
+        default=False,
+        verbose_name=' Udgået',
+        help_text='Hvis tabellen er udgået, '
+        'vil en udgået dato blive sat igennem den her afkrydsning',
+        )
+
+    date_created = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Lavet den',
+        )
+
+    date_modified = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Sidst modificeret',
+        )
+
+    date_obsolete = models.DateTimeField(
+        blank=True, 
+        null=True, 
+        editable=False,
+        verbose_name='Udgået den',
+        )
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Check if instance is_obsolete, if it is, update date_obsolete with
+        # timezone.now(). Else if not is_obsolete, replace with None.
+        if self.is_obsolete:
+            self.date_obsolete = timezone.now()
+        elif not self.is_obsolete:
+            self.date_obsolete = None
+
+        super().save(*args, **kwargs)
 
 
 class SchemaColumn(models.Model):
@@ -46,10 +90,15 @@ class SchemaColumn(models.Model):
 
     schema = models.ForeignKey(Schema, on_delete=models.CASCADE,)
     text = models.CharField(max_length=100,)
-    is_bool = models.BooleanField(default=False,
-                                           verbose_name='Ja/Nej spørgsmål',)
-    is_editable = models.BooleanField(default=False,
-                                      verbose_name='Felt kan ændres',)
+    is_bool = models.BooleanField(
+        default=False,
+        verbose_name='Ja/Nej spørgsmål',
+        )
+
+    is_editable = models.BooleanField(
+        default=False,
+        verbose_name='Felt kan ændres',
+        )
 
     class Meta:
         unique_together = ('schema', 'text',)
@@ -83,8 +132,7 @@ class SchemaResponse(models.Model):
     instruction = models.ForeignKey(
         SchemaHelpUrl, 
         on_delete=models.PROTECT,
-        null=True,
-    )
+        null=True,)
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, default=1) # admin
     pub_date = models.DateTimeField(auto_now_add=True,)
