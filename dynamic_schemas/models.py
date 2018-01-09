@@ -108,15 +108,19 @@ class SchemaColumn(models.Model):
 
     def save(self, *args, **kwargs):
         if self.schema.is_locked:
-            raise SchemaIsLockedError(f'{self.schema.name}.is_locked = '
-                                      f'{self.schema.is_locked}, can\'t save')
+            raise SchemaIsLockedError(
+                f'{self.schema.name}.is_locked = '
+                f'{self.schema.is_locked}, can\'t save'
+                )
         else:
             super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.schema.is_locked:
-            raise SchemaIsLockedError(f'{self.schema.name}.is_locked = '
-                                      f'{self.schema.is_locked}, can\'t delete')
+            raise SchemaIsLockedError(
+                f'{self.schema.name}.is_locked = '
+                f'{self.schema.is_locked}, can\'t delete'
+                )
         else:
             super().delete(*args, **kwargs)
 
@@ -136,7 +140,7 @@ class SchemaResponse(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, default=1) # admin
     pub_date = models.DateTimeField(auto_now_add=True,)
-    
+
 
     def __str__(self):
         return f'{self.id}'

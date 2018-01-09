@@ -1,34 +1,27 @@
+{% extends 'dynamic_schemas/base.html' %}
 {% load static %}
 {% load login_extras %}
-<html>
-    <head>
-        <link rel="stylesheet" 
-              type="text/css"
-              href="{% static 'dynamic_schemas/css/style.css' %}" />
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+{% block content %}
+<body>
+    <div class="container">
+        <form class="form-box" method="post">
+            <div class="login-header">
+                <h2> DaminoSystems Rengøring </h2>
+            </div>
+            <div class="help-text">
+                <p><b>Hvis du har brug for hjælp eller har spørgsmål så kom hen til mig i pavillonen</b></p>
+                <p class="help-text"> Dit login er det samme som på IPW/BDKLS </p>
+            </div>
 
-        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    </head>
-    <body>
-        <div class="container">
-            <form class="form-box" method="post">
-                <div class="login-header">
-                    <h2> DaminoSystems Rengøring </h2>
-                </div>
-                <div class="help-text">
-                    <p><b>Hvis du har spørgsmål så kom hen til mig i pavillonen</b></p>
-                    <p style="color: lightgrey"> Dit login er det samme som på IPW/BDKLS </p>
-                </div>
-
-                {% csrf_token %}
-                <div class="field-wrapper">
-                    {{ form.username|set_placeholder:"Brugernavn" }}
-                </div>
-                <div class="field-wrapper">
-                    {{ form.password|set_placeholder:"Kodeord" }}
-                </div>
-                <button class="btn btn-default pull-right" type="submit">Log ind</button>
-            </form>
-        </div>
-    </body>
-</html>
+            {% csrf_token %}
+            <div class="field-wrapper">
+                {{ form.username|set_placeholder:"Brugernavn" }}
+            </div>
+            <div class="field-wrapper">
+                {{ form.password|set_placeholder:"Kodeord" }}
+            </div>
+            <button class="btn btn-default pull-right" type="submit">Log ind</button>
+        </form>
+    </div>
+</body>
+{% endblock %}

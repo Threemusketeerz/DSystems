@@ -5,10 +5,12 @@
             {% if all_schemas %}
             <div class="custom-btn-group">
                 <h2> Rengørings skemaer </h2>
+                <p class="help-text">Tryk på det ønskede skema, og oppe i toppen vil du finde en
+                knap til dine behov! </p>
                 {% for schema in all_schemas %}
                     {% if schema.is_active %}
                     <a href="{% url 'dynamic_schemas:schema_view' schema.id %}">
-                        <button id="menu-btn" class="btn btn-primary">{{schema.name}}</button>
+                        <button id="menu-btn" class="btn btn-default">{{schema.name}}</button>
                     </a>
                     {% endif %}
                 {% endfor %}

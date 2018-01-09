@@ -34,19 +34,19 @@ class SchemaResponseForm(forms.Form):
         # import ipdb; ipdb.set_trace()
         for question in self.schema_questions:
             if question.is_bool and question.is_editable:
-                    self.fields[question.text] = forms.ChoiceField(
-                        choices=SELECT_CHOICES_EDIT,
-                        widget=forms.Select(
-                            attrs={'class': 'form-control'}
-                            )
+                self.fields[question.text] = forms.ChoiceField(
+                    choices=SELECT_CHOICES_EDIT,
+                    widget=forms.Select(
+                        attrs={'class': 'form-control'}
                         )
+                    )
             elif question.is_bool and not question.is_editable:
-                    self.fields[question.text] = forms.ChoiceField(
-                        choices=SELECT_CHOICES,
-                        widget=forms.Select(
-                            attrs={'class': 'form-control'}
-                            )
+                self.fields[question.text] = forms.ChoiceField(
+                    choices=SELECT_CHOICES,
+                    widget=forms.Select(
+                        attrs={'class': 'form-control'}
                         )
+                    )
             else:
                 self.fields[question.text] = forms.CharField(
                     max_length=200,
@@ -106,7 +106,7 @@ class ResponseUpdateForm(forms.Form):
             # proper conditions have been setup for such a scenario.
             if queried_q.is_bool:
                 if queried_q.is_editable \
-                   and ansr == SELECT_CHOICES_EDIT[0][0]:
+                and ansr == SELECT_CHOICES_EDIT[0][0]:
                     # SELECT_CHOICES_EDIT[0][0] first tuple, first value
                     self.fields[qstn] = forms.ChoiceField(
                         choices=SELECT_CHOICES_EDIT,
@@ -142,6 +142,7 @@ class ResponseUpdateForm(forms.Form):
                         attrs={'class': 'form-control'}
                         )
                     )
+
 
     def is_valid(self):
         # Parent validation first, get cleaned data.
