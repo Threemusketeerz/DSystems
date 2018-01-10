@@ -13,7 +13,7 @@ class SchemaHelpUrl(models.Model):
     """This will be initialized above all the fields. Beneath the header. this
     will contain urls referencing links connected to the schema."""
 
-    url = models.URLField()
+    url = models.CharField(max_length=200)
     name = models.CharField(max_length=50,)
     help_text = models.TextField(default='',)
 
