@@ -9,4 +9,4 @@ DaminoSystemsv4/
 htmlcov/
 *.swo
 newdumpsjson/
-dynamic_schemas/static/dynamic_schemas/dependencies/
+manage.py
