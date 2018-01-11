@@ -115,13 +115,12 @@ class ResponseUpdateForm(forms.Form):
                     self.fields[qstn].widget.attrs['disabled'] = False
 
                 else:
-                    self.fields[qstn] = forms.ChoiceField(
-                        choices=SELECT_CHOICES,
-                        widget=self.c_widget
+                    self.fields[qstn] = forms.CharField(
+                        initial=ansr, 
+                        widget=forms.TextInput(
+                            attrs={'class': 'form-control', 'readonly': True}
+                            )
                         )
-                    self.fields[qstn].widget.attrs['disabled'] = True
-
-                    self.fields[qstn].initial = ansr
 
             elif not queried_q.is_editable or ansr != '':
                 self.fields[qstn] = forms.CharField(
