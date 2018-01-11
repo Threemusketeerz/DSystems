@@ -93,7 +93,7 @@ class ResponseUpdateForm(forms.Form):
 
         self.instance = instance 
         self.schema = Schema.objects.get(pk=pk)
-        self.schema_questions = self.schema.schemacolumn_set.all()
+        self.schema_columns = self.schema.schemacolumn_set.all()
         self.c_widget = forms.Select(
             attrs={'class': 'form-control'},
             )
@@ -118,7 +118,7 @@ class ResponseUpdateForm(forms.Form):
                     self.fields[qstn] = forms.CharField(
                         initial=ansr, 
                         widget=forms.TextInput(
-                            attrs={'class': 'form-control', 'readonly': True}
+                            attrs={'class': 'form-control', 'disabled': True}
                             )
                         )
 
@@ -128,7 +128,7 @@ class ResponseUpdateForm(forms.Form):
                     max_length=100,
                     initial=ansr,
                     widget=forms.TextInput(
-                        attrs={'class':'form-control', 'readonly': True}
+                        attrs={'class':'form-control', 'disabled': True}
                         )
                     )
                 
@@ -142,32 +142,34 @@ class ResponseUpdateForm(forms.Form):
                         )
                     )
 
-
     def is_valid(self):
         # Parent validation first, get cleaned data.
-        valid = super().is_valid()
+        """ Cleans own data, makes sure columns is editable and is empty """
+        editable_columns = { 
+            c.text:
+            c.is_editable for c in self.schema_columns
+            }
 
-        if not valid:
-            return valid
+        exists = {} 
+        for key, value in self.data.items():
+            if key in self.instance.qa_set \
+            and editable_columns[key] \
+            and self.instance.qa_set[key] == '':
+                exists[key] = value
 
-        fetch_questions = [q.text for q in self.schema_questions]
-        # fetch_questions.append(self.schema.name)
+        if exists:
+            self.cleaned_data = exists
+            return True
 
-        # Keeping this for now, as long as it doesnt cause trouble
-        for qstn in self.data:
-            if qstn not in fetch_questions \
-            and qstn != 'csrfmiddlewaretoken':
-                try:
-                    raise AttributeError(f'{qstn} is in your imagination')
-                finally:
-                    return False
+        return False
 
-        return True
 
     def update(self, *args, **kwargs):
         if self.cleaned_data:
 
-            self.instance.qa_set = self.cleaned_data 
+            # __import__('ipdb').set_trace()
+            for key, value in self.cleaned_data.items():
+                self.instance.qa_set[key] = value
             self.instance.save()
 
         else:
