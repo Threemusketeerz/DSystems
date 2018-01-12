@@ -98,45 +98,45 @@ class ResponseUpdateForm(forms.Form):
             attrs={'class': 'form-control'},
             )
     
-        for qstn, ansr in instance.qa_set.items():
-            queried_q = SchemaColumn.objects.get(schema=self.schema,
-                                                   text=qstn)
+        for column, answer in instance.qa_set.items():
+            queried_column = SchemaColumn.objects.get(schema=self.schema,
+                                                   text=column)
 
             # If is_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
-            if queried_q.is_bool:
-                if queried_q.is_editable \
-                and ansr == SELECT_CHOICES_EDIT[0][0]:
+            if queried_column.is_bool:
+                if queried_column.is_editable \
+                and answer == SELECT_CHOICES_EDIT[0][0]:
                     # SELECT_CHOICES_EDIT[0][0] first tuple, first value
-                    self.fields[qstn] = forms.ChoiceField(
+                    self.fields[column] = forms.ChoiceField(
                         choices=SELECT_CHOICES_EDIT,
                         widget=self.c_widget
                         )
-                    self.fields[qstn].widget.attrs['disabled'] = False
+                    self.fields[column].widget.attrs['disabled'] = False
 
                 else:
-                    self.fields[qstn] = forms.CharField(
-                        initial=ansr, 
+                    self.fields[column] = forms.CharField(
+                        initial=answer, 
                         widget=forms.TextInput(
                             attrs={'class': 'form-control', 'disabled': True}
                             )
                         )
 
-            elif not queried_q.is_editable or ansr != '':
-                self.fields[qstn] = forms.CharField(
+            elif not queried_column.is_editable or answer != '':
+                self.fields[column] = forms.CharField(
                     required=False,
                     max_length=100,
-                    initial=ansr,
+                    initial=answer,
                     widget=forms.TextInput(
                         attrs={'class':'form-control', 'disabled': True}
                         )
                     )
                 
             else:
-                self.fields[qstn] = forms.CharField(
+                self.fields[column] = forms.CharField(
                     required=False,
                     max_length=100,
-                    initial=ansr, # Should be empty '' else remove this field
+                    initial=answer, # Should be empty '' else remove this field
                     widget=forms.TextInput(
                         attrs={'class': 'form-control'}
                         )
