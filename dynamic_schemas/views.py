@@ -121,15 +121,6 @@ class SchemaView(LoginRequiredMixin, APIView):
             Should this be a classmethod? Will a classmethod complicate the
             view in its context?
 
-            usage:
-            THIS IS BROKEN
-            >>> import datetime
-            >>> dt = datetime.datetime(2000, 12, 31, 14, 0)
-            >>> str(dt)
-            '2000-12-31 14:00:00'
-            >>> denmark_tz = _make_date_tz(instance=dt, tz='Europe/Copenhagen')
-            >>> str(denmark_tz)
-            '2000-12-31 14:50:00+0500'
         """
         # Can this be moved to SETTINGS instead? Same for _make_date_readable.
         # Problem is probably that the UTC format gets overridden.
@@ -153,7 +144,7 @@ class SchemaView(LoginRequiredMixin, APIView):
                     tz='Europe/Copenhagen'
                     )
             instance.pub_date = inst_as_cet \
-                    .strftime('%Y-%m-%d %H:%M:%S')
+                    .strftime('%d-%m-%Y %H:%M:%S')
 
         return instances
 
