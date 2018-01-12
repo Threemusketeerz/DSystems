@@ -154,7 +154,8 @@ class ResponseUpdateForm(forms.Form):
         for key, value in self.data.items():
             if key in self.instance.qa_set \
             and editable_columns[key] \
-            and self.instance.qa_set[key] == '':
+            and (self.instance.qa_set[key] == '' \
+            or self.instance.qa_set[key] == '------'):
                 exists[key] = value
 
         if exists:
