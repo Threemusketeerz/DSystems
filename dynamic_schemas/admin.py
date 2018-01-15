@@ -63,6 +63,7 @@ class SchemaAdmin(admin.ModelAdmin):
     inlines = [QuestionInline]
 
 admin.site.site_url = '/rengoering/'
+admin.site.site_header = 'Damino Systems'
 
 admin.site.register(Schema, SchemaAdmin)
 admin.site.register(SchemaHelpUrl)
