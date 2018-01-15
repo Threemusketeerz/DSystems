@@ -144,7 +144,7 @@ class SchemaView(LoginRequiredMixin, APIView):
                     tz='Europe/Copenhagen'
                     )
             instance.pub_date = inst_as_cet \
-                    .strftime('%d-%m-%Y %H:%M:%S')
+                    .strftime('%d-%m/%Y %H:%M:%S')
 
         return instances
 
