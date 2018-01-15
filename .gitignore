@@ -10,3 +10,4 @@ htmlcov/
 *.swo
 newdumpsjson/
 manage.py
+geckodriver.log
