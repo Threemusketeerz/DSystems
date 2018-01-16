@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from jsonfield import JSONField
 
 from .exceptions import SchemaIsLockedError
-# Create your models here.
+
+import logging
 
 
 class SchemaHelpUrl(models.Model):
@@ -42,8 +43,9 @@ class Schema(models.Model):
     is_locked = models.BooleanField(
         default=False,
         verbose_name='Lås',
-        help_text='Hvis du låser kan du ikke ændre kolonnerne'
-        ' i fremtiden. Du LÅSER kolonnerne.',
+        help_text="""Hvis du låser kan du ikke ændre kolonnerne 
+        i fremtiden. Du LÅSER kolonnerne. HVIS DU PRØVER VIL DU FÅ ERROR CODE
+        500""",
         )
 
     is_obsolete = models.BooleanField(
@@ -108,6 +110,7 @@ class SchemaColumn(models.Model):
 
     def save(self, *args, **kwargs):
         if self.schema.is_locked:
+            # CAUSING 500 INTERNAL ERROR
             raise SchemaIsLockedError(
                 f'{self.schema.name}.is_locked = '
                 f'{self.schema.is_locked}, can\'t save'
@@ -115,12 +118,15 @@ class SchemaColumn(models.Model):
         else:
             super().save(*args, **kwargs)
 
+
     def delete(self, *args, **kwargs):
         if self.schema.is_locked:
+            # CAUSING 500 INTERNAL ERROR
             raise SchemaIsLockedError(
                 f'{self.schema.name}.is_locked = '
                 f'{self.schema.is_locked}, can\'t delete'
                 )
+            return
         else:
             super().delete(*args, **kwargs)
 

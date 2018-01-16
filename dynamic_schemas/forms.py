@@ -26,29 +26,29 @@ class SchemaResponseForm(forms.Form):
         super().__init__(*args, **kwargs)
         
         self.schema = schema
-        self.schema_questions = schema.schemacolumn_set.all()
+        self.schema_columns = schema.schemacolumn_set.all()
         
         self.URLS = self.schema.help_field.values_list('id', 'name')
         # import ipdb; ipdb.set_trace()
         # self.schema_urls = schema.schemahelpurl_set.all()
         # import ipdb; ipdb.set_trace()
-        for question in self.schema_questions:
-            if question.is_bool and question.is_editable:
-                self.fields[question.text] = forms.ChoiceField(
+        for column in self.schema_columns:
+            if column.is_bool and column.is_editable:
+                self.fields[column.text] = forms.ChoiceField(
                     choices=SELECT_CHOICES_EDIT,
                     widget=forms.Select(
                         attrs={'class': 'form-control'}
                         )
                     )
-            elif question.is_bool and not question.is_editable:
-                self.fields[question.text] = forms.ChoiceField(
+            elif column.is_bool and not column.is_editable:
+                self.fields[column.text] = forms.ChoiceField(
                     choices=SELECT_CHOICES,
                     widget=forms.Select(
                         attrs={'class': 'form-control'}
                         )
                     )
             else:
-                self.fields[question.text] = forms.CharField(
+                self.fields[column.text] = forms.CharField(
                     max_length=200,
                     required=False,
                     empty_value='',
