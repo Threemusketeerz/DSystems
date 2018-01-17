@@ -97,9 +97,9 @@ class SchemaColumn(models.Model):
         verbose_name='Ja/Nej spørgsmål',
         )
 
-    is_editable = models.BooleanField(
+    is_editable_once = models.BooleanField(
         default=False,
-        verbose_name='Felt kan ændres',
+        verbose_name='Felt kan ændres, en enkelt gang',
         )
 
     class Meta:

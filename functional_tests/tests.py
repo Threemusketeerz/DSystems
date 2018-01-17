@@ -160,17 +160,17 @@ class SuperUserTest(ToolKitMixin, StaticLiveServerTestCase):
         text_input2.send_keys('TESTING1')
         self.wait_for_element('id_schemacolumn_set-1-is_bool', 'id').click()
 
-        # Another row is_editable
+        # Another row is_editable_once
         add_row()
         text_input3 = self.wait_for_element('id_schemacolumn_set-2-text', 'id')
         text_input3.send_keys('TESTING2')
-        self.wait_for_element('id_schemacolumn_set-2-is_editable', 'id').click()
+        self.wait_for_element('id_schemacolumn_set-2-is_editable_once', 'id').click()
         
-        # another row is_editable_once, is_bool
+        # another row is_editable_once_once, is_bool
         add_row()
         text_input4 = self.wait_for_element('id_schemacolumn_set-3-text', 'id')
         text_input4.send_keys('TESTING3')
-        self.wait_for_element('id_schemacolumn_set-3-is_editable', 'id').click()
+        self.wait_for_element('id_schemacolumn_set-3-is_editable_once', 'id').click()
         self.wait_for_element('id_schemacolumn_set-3-is_bool', 'id').click()
 
         # SAVES THE TABLE
@@ -252,10 +252,10 @@ class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
                 schema=self.schema, text='c2', is_bool=True,
                 ),
             SchemaColumn(
-                schema=self.schema, text='c3', is_editable=True
+                schema=self.schema, text='c3', is_editable_once=True
                 ),
             SchemaColumn(
-                schema=self.schema, text='c4', is_bool=True, is_editable=True
+                schema=self.schema, text='c4', is_bool=True, is_editable_once=True
                 ),
             ])
 
@@ -276,11 +276,12 @@ class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
 
         menu = self.wait_for_element('custom-btn-group', 'class')
         menu_btns = menu.find_elements_by_css_selector('#menu-btn')
+        menu_btns_list = [b.text for b in menu_btns]
 
         # Length of menu_btns should be 1, since INVISIBLE is inactive
         self.assertEqual(len(menu_btns), 1)
-        self.assertNotIn('INVISIBLE', [b.text for b in menu_btns])
-        self.assertIn('TEST', [b.text for b in menu_btns])
+        self.assertNotIn('INVISIBLE', menu_btns_list)
+        self.assertIn('TEST', menu_btns_list)
 
     def test_user_makes_first_entry_and_update(self):
         menu = self.wait_for_element('custom-btn-group', 'class')

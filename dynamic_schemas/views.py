@@ -63,7 +63,7 @@ def form_update_view(request, pk, r_pk):
     # the submit button will be provided. There is no restriction on
     # has_been_edited, but since the data cant be saved we're good for now.
     load_button = False
-    aggr_editables = [c.is_editable for c in columns]
+    aggr_editables = [c.is_editable_once for c in columns]
 
     if True in aggr_editables:
         load_button = True

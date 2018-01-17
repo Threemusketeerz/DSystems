@@ -21,7 +21,7 @@ def create_json_for_response(q_instances, response):
     for i, q in enumerate(q_instances):
         if q.is_bool:
             json[q.text] = bool(random.getrandbits(1))
-        elif q.is_editable:
+        elif q.is_editable_once:
             json[q.text] = ''
         else:
             json[q.text] = response + f' {i}'
@@ -196,7 +196,7 @@ class ResponseFormUpdateTests(TestCase):
                 )
         self.qe = SchemaColumn.objects.create(schema=self.schema, 
                 text='test qe', 
-                is_editable=True)
+                is_editable_once=True)
 
         self.questions = SchemaColumn.objects.filter(schema=self.schema)
 

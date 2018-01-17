@@ -33,14 +33,14 @@ class SchemaResponseForm(forms.Form):
         # self.schema_urls = schema.schemahelpurl_set.all()
         # import ipdb; ipdb.set_trace()
         for column in self.schema_columns:
-            if column.is_bool and column.is_editable:
+            if column.is_bool and column.is_editable_once:
                 self.fields[column.text] = forms.ChoiceField(
                     choices=SELECT_CHOICES_EDIT,
                     widget=forms.Select(
                         attrs={'class': 'form-control'}
                         )
                     )
-            elif column.is_bool and not column.is_editable:
+            elif column.is_bool and not column.is_editable_once:
                 self.fields[column.text] = forms.ChoiceField(
                     choices=SELECT_CHOICES,
                     widget=forms.Select(
@@ -105,7 +105,7 @@ class ResponseUpdateForm(forms.Form):
             # If is_bool, we don't want it to be editable untill
             # proper conditions have been setup for such a scenario.
             if queried_column.is_bool:
-                if queried_column.is_editable \
+                if queried_column.is_editable_once \
                 and answer == SELECT_CHOICES_EDIT[0][0]:
                     # SELECT_CHOICES_EDIT[0][0] first tuple, first value
                     self.fields[column] = forms.ChoiceField(
@@ -122,7 +122,7 @@ class ResponseUpdateForm(forms.Form):
                             )
                         )
 
-            elif not queried_column.is_editable or answer != '':
+            elif not queried_column.is_editable_once or answer != '':
                 self.fields[column] = forms.CharField(
                     required=False,
                     max_length=100,
@@ -147,9 +147,8 @@ class ResponseUpdateForm(forms.Form):
         """ Cleans own data, makes sure columns is editable and is empty """
         editable_columns = { 
             c.text:
-            c.is_editable for c in self.schema_columns
-            }
-
+            c.is_editable_once for c in self.schema_columns
+            } 
         exists = {} 
         for key, value in self.data.items():
             if key in self.instance.qa_set \

@@ -28,7 +28,7 @@ class SchemaAdminForm(forms.ModelForm):
 class QuestionInline(admin.StackedInline):
     fieldsets = [         
         (None, {
-            'fields': ('text', 'is_bool', 'is_editable',),
+            'fields': ('text', 'is_bool', 'is_editable_once',),
             }
         ),
     ]
