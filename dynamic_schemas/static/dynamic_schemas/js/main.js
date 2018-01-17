@@ -36,7 +36,7 @@ $(document).ready(function() {
                         return "<span class='glyphicon glyphicon-ok'>Ja</span>";
                     if (data === 'Nej')
                         return "<span class='glyphicon glyphicon-remove'>Nej</span>";
-                        return data;
+                    return data;
                 },
                 // Checks all targets
                 "targets": "_all"
