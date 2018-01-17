@@ -10,6 +10,14 @@ from dynamic_schemas.models import Schema, SchemaColumn, SchemaHelpUrl
 
 import time
 
+""" Possible extra test cases
+    1. Check if correct instructions are passed to the table(Should maybe be a
+    unittest).
+    2. Change admin test to enter the site from desired entry point instead of
+    /admin/
+    3.
+"""
+
 MAX_WAIT = 10
 
 class ToolKitMixin:
@@ -65,7 +73,7 @@ class SuperUserTest(ToolKitMixin, StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
-        self.browser.minimize_window()
+        # self.browser.minimize_window()
         self.user = User.objects.create_superuser(
             'test', 'test@test.com', 'testpw'
             )
@@ -271,8 +279,8 @@ class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
 
         # Length of menu_btns should be 1, since INVISIBLE is inactive
         self.assertEqual(len(menu_btns), 1)
-        self.assertEqual(menu_btns[0].text, 'TEST')
-        self.assertNotEqual(menu_btns[0].text, self.schema_inv.name)
+        self.assertNotIn('INVISIBLE', [b.text for b in menu_btns])
+        self.assertIn('TEST', [b.text for b in menu_btns])
 
     def test_user_makes_first_entry_and_update(self):
         menu = self.wait_for_element('custom-btn-group', 'class')
@@ -318,3 +326,6 @@ class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
         self.assertIn('UPDATEC3', table_data_list)
         # Just making sure this is still in the list
         self.assertIn('Initial', table_data_list)
+
+        #This concludes general use of the tables.
+
