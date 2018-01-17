@@ -12,17 +12,7 @@ import time
 
 MAX_WAIT = 10
 
-class SuperUserTest(StaticLiveServerTestCase):
-
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        self.user = User.objects.create_superuser(
-            'test', 'test@test.com', 'testpw'
-            )
-
-    def tearDown(self):
-        self.browser.quit()
-
+class ToolKitMixin:
     def wait_for_element(self, name, type_):
         start_time = time.time()
         while True:
@@ -49,8 +39,8 @@ class SuperUserTest(StaticLiveServerTestCase):
                     elements = self.browser.find_elements_by_name(name)
                 if type_ == 'class':
                     elements = self.browser.find_elements_by_class_name(name)
-                if type_ == 'id':
-                    elements = self.browser.find_elements_by_id(name)
+                if type_ == 'css':
+                    elements = self.browser.find_elements_by_css_selector(name)
                 if type_ == 'tag':
                     elements = self.browser.find_elements_by_tag_name(name)
                 return elements
@@ -58,15 +48,8 @@ class SuperUserTest(StaticLiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
-                
 
-    def test_superuser_add_lock_delete_schema(self):
-        """ This has become a very long test, should probably be cut down """
-        # Superuser goes to the admin site.
-        self.browser.get(self.live_server_url + '/admin/')
-
-        # Superuser enters his username and password
-        # username = self.browser.find_element_by_name('username')
+    def login(self):
         username = self.wait_for_element('username', 'name')
         username.send_keys('test')
 
@@ -75,6 +58,29 @@ class SuperUserTest(StaticLiveServerTestCase):
         password.send_keys('testpw')
 
         password.send_keys(Keys.ENTER)
+
+
+
+class SuperUserTest(ToolKitMixin, StaticLiveServerTestCase):
+
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        self.browser.minimize_window()
+        self.user = User.objects.create_superuser(
+            'test', 'test@test.com', 'testpw'
+            )
+
+    def tearDown(self):
+        self.browser.quit()
+
+    def test_superuser_add_lock_delete_schema(self):
+        """ This has become a very long test, should probably be cut down """
+        # Superuser goes to the admin site.
+        self.browser.get(self.live_server_url + '/admin/')
+
+        # Superuser enters his username and password
+        # username = self.browser.find_element_by_name('username')
+        self.login()
 
         # Superuser now sees the screen with the admin options.
         # He wants to create a new Schema, so he can test out the front end
@@ -206,14 +212,14 @@ class SuperUserTest(StaticLiveServerTestCase):
         # Replacement of expectedFailure.
         try:
             self.browser.find_element_by_tag_name('table')
-        except NoSuchElementException as e:
+        except NoSuchElementException:
             pass
 
         # admin logs out
         self.browser.get(self.live_server_url + '/admin/logout/')
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -226,6 +232,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.schema = Schema.objects.create(
             name='TEST', is_active=True
             )
+        self.schema.help_field.add(url)
+        self.schema.save()
 
         # Create every combination of columns
         SchemaColumn.objects.bulk_create([
@@ -243,39 +251,70 @@ class NewVisitorTest(StaticLiveServerTestCase):
                 ),
             ])
 
+        self.browser.get(self.live_server_url + '/rengoering/')
+        self.login()
+
     def tearDown(self):
+        self.logout()
         self.browser.quit()
 
-    def wait_for_element(self, name, type_):
-        start_time = time.time()
-        while True:
-            try:
-                if type_ == 'name':
-                    element = self.browser.find_element_by_name(name)
-                if type_ == 'class':
-                    element = self.browser.find_element_by_class_name(name)
-                if type_ == 'id':
-                    element = self.browser.find_element_by_id(name)
-                if type_ == 'tag':
-                    element = self.browser.find_element_by_tag_name(name)
-                return element
-            except(AssertionError, WebDriverException, NoSuchElementException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    def test_user_can_login_and_logout(self):
-        self.browser.get(self.live_server_url + '/rengoering/')
-
-        # Superuser enters his username and password
-        # username = self.browser.find_element_by_name('username')
-        username = self.wait_for_element('username', 'name')
-        username.send_keys('test')
-
-        # password = self.browser.find_element_by_name('password')
-        password = self.wait_for_element('password', 'name')
-        password.send_keys('testpw')
-        password.send_keys(Keys.ENTER)
-
+    def logout(self):
         self.wait_for_element('glyphicon-log-out', 'class').click()
 
+    def test_user_sees_right_index(self):
+        self.schema_inv = Schema.objects.create(
+            name='INVISIBLE', is_active=False
+            )
+
+        menu = self.wait_for_element('custom-btn-group', 'class')
+        menu_btns = menu.find_elements_by_css_selector('#menu-btn')
+
+        # Length of menu_btns should be 1, since INVISIBLE is inactive
+        self.assertEqual(len(menu_btns), 1)
+        self.assertEqual(menu_btns[0].text, 'TEST')
+        self.assertNotEqual(menu_btns[0].text, self.schema_inv.name)
+
+    def test_user_makes_first_entry_and_update(self):
+        menu = self.wait_for_element('custom-btn-group', 'class')
+        menu_btns = menu.find_elements_by_css_selector('#menu-btn')[0].click()
+
+        new_entry = self.wait_for_element('btn', 'class')
+        new_entry.click()
+
+        form_box = self.wait_for_element('form-box', 'class')
+        input1 = self.wait_for_element('id_c1', 'id')
+        input1.send_keys('Initial')
+
+        self.wait_for_element('submit-btn', 'class').click()
+
+        # Check if in table
+        table_data = self.wait_for_elements('td', 'tag')
+        self.assertIn('Initial', [d.text for d in table_data])
+
+        # Check if updatable
+        first_row = self.wait_for_element('odd', 'class')
+        first_row.click()
+
+        update_btn = self.wait_for_element('buttons-selected', 'class')
+        update_btn.click()
+
+        c3 = self.wait_for_element('id_c3', 'id')
+        c4 = self.wait_for_element('id_c4', 'id')
+
+        c3.send_keys('UPDATEC3')
+
+        c4.click()
+        c4.send_keys('j')
+        c4.send_keys(Keys.ENTER)
+
+        c3.send_keys(Keys.ENTER)
+
+        # Refetch tabledata element, and assert if our update is in
+        table_row = self.wait_for_element('odd', 'class')
+        table_data = self.wait_for_elements('td', 'tag')
+        # __import__('ipdb').set_trace()
+        table_data_list = [d.text for d in table_data]
+        self.assertIn('Ja', table_data_list)
+        self.assertIn('UPDATEC3', table_data_list)
+        # Just making sure this is still in the list
+        self.assertIn('Initial', table_data_list)
