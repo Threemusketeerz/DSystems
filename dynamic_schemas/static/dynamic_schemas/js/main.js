@@ -33,10 +33,9 @@ $(document).ready(function() {
                 "render": function(data, type, row, meta){
                     
                     if (data === 'Ja') 
-                        return "<span class='glyphicon glyphicon-ok' style='font-size: 1.5em;'>Ja</span>";
+                        return "<span class='glyphicon glyphicon-ok'>Ja</span>";
                     if (data === 'Nej')
-                        return "<span class='glyphicon glyphicon-remove' style='font-size: 1.5em'>Nej</span>";
-                    else        
+                        return "<span class='glyphicon glyphicon-remove'>Nej</span>";
                         return data;
                 },
                 // Checks all targets
