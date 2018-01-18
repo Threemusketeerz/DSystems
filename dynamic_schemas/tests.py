@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from . import views
 from .forms import SchemaResponseForm, ResponseUpdateForm
-from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl, SchemaHistoryLog
 from .exceptions import SchemaIsLockedError
 
 import unittest
@@ -331,3 +331,37 @@ class ViewTests(TestCase):
 
         self.assertNotEqual(readable_date, unreadable_date)
 
+
+class SchemaHistoryLogTest(TestCase):
+    def setUp(self):
+        Schema.objects.bulk_create([
+            Schema(name="old schema", is_obsolete=True),
+            Schema(name="old locked schema", is_obsolete=True, is_locked=True),
+            Schema(name="new schema", is_active=True),
+            Schema(name="new locked schema", is_active=True, is_locked=True),
+            ])
+        
+        self.s1, self.s2, self.s3, self.s4 = Schema.objects.all()
+        self.hist = SchemaHistoryLog
+
+    def test_history_manager_obsolete(self):
+        hist = self.hist
+        hist_obso = hist.history.obsolete()
+
+        schema_names = [s.name for s in hist_obso]
+
+        self.assertIn(self.s1.name, schema_names)
+        self.assertIn(self.s2.name, schema_names)
+        self.assertNotIn(self.s3.name, schema_names)
+        self.assertNotIn(self.s4.name, schema_names)
+
+    def test_history_manager_new(self):
+        hist = self.hist
+        hist_new = hist.history.new()
+
+        schema_names = [s.name for s in hist_new]
+
+        self.assertIn(self.s4.name, schema_names)
+        self.assertIn(self.s3.name, schema_names)
+        self.assertNotIn(self.s2.name, schema_names)
+        self.assertNotIn(self.s1.name, schema_names)
