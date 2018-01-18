@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl
 
 
 # Rename ResponseForm
@@ -30,7 +30,7 @@ class SchemaResponseForm(forms.Form):
         
         self.URLS = self.schema.help_field.values_list('id', 'name')
         # import ipdb; ipdb.set_trace()
-        # self.schema_urls = schema.schemahelpurl_set.all()
+        # self.schema_urls = schema.schemaurl_set.all()
         # import ipdb; ipdb.set_trace()
         for column in self.schema_columns:
             if column.is_bool and column.is_editable_once:
@@ -68,7 +68,7 @@ class SchemaResponseForm(forms.Form):
 
         if self.cleaned_data:
             instr_id = self.cleaned_data.pop('instruktion')
-            instr_inst = get_object_or_404(SchemaHelpUrl, pk=instr_id)
+            instr_inst = get_object_or_404(SchemaUrl, pk=instr_id)
 
             instance = SchemaResponse(
                 schema=self.schema,

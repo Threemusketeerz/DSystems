@@ -6,10 +6,8 @@ from jsonfield import JSONField
 
 from .exceptions import SchemaIsLockedError
 
-import logging
 
-
-class SchemaHelpUrl(models.Model):
+class SchemaUrl(models.Model):
 
     """This will be initialized above all the fields. Beneath the header. this
     will contain urls referencing links connected to the schema."""
@@ -29,7 +27,7 @@ class Schema(models.Model):
     name = models.CharField(max_length=100,)
 
     help_field = models.ManyToManyField(
-        SchemaHelpUrl,
+        SchemaUrl,
         verbose_name='Instruktions felt',
         blank=True,
         )
@@ -140,7 +138,7 @@ class SchemaResponse(models.Model):
     qa_set = JSONField()
 
     instruction = models.ForeignKey(
-        SchemaHelpUrl, 
+        SchemaUrl, 
         on_delete=models.PROTECT,
         null=True,)
 
@@ -154,3 +152,27 @@ class SchemaResponse(models.Model):
     def get_questions(self):
         return SchemaColumn.objects.filter(schema=self.schema)
 
+
+class SchemaHistoryManager(models.Manager):
+    def obsolete(self):
+        return Schema.objects.filter(is_obsolete=True)
+
+    def new(self):
+        return Schema.objects.filter(is_obsolete=False)
+
+
+class SchemaHistoryLog(models.Model):
+    history = SchemaHistoryManager()
+    obsolete_schema = models.ForeignKey(
+        Schema, related_name='obsolete', on_delete=models.DO_NOTHING,
+        blank=True, null=True, limit_choices_to={'is_obsolete': True},
+        )
+    new_schema = models.ForeignKey(
+        Schema, related_name='new', on_delete=models.DO_NOTHING,
+        blank=True, null=True, limit_choices_to={'is_obsolete': False},
+        )
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+    """ Manager that handles set of objects for OLD_SCHEMA = model.is_obsolete.
+        And NEW_SCHEMA != model.is_obsolete
+    """

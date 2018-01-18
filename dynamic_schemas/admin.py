@@ -3,7 +3,7 @@ from django.forms import ModelMultipleChoiceField
 from django.contrib import admin
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from .models import Schema, SchemaColumn, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaUrl, SchemaHistoryLog
 
 # Register your models here.
 class SchemaAdminForm(forms.ModelForm):
@@ -66,4 +66,5 @@ admin.site.site_url = '/rengoering/'
 admin.site.site_header = 'Damino Systems'
 
 admin.site.register(Schema, SchemaAdmin)
-admin.site.register(SchemaHelpUrl)
+admin.site.register(SchemaUrl)
+admin.site.register(SchemaHistoryLog)

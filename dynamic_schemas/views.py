@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
 
-from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl
 from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
 

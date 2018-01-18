@@ -6,7 +6,7 @@ from selenium.common.exceptions import (WebDriverException,
     NoSuchElementException)
 from selenium.webdriver.common.keys import Keys
 
-from dynamic_schemas.models import Schema, SchemaColumn, SchemaHelpUrl
+from dynamic_schemas.models import Schema, SchemaColumn, SchemaUrl
 
 import time
 
@@ -93,9 +93,9 @@ class SuperUserTest(ToolKitMixin, StaticLiveServerTestCase):
         # Superuser now sees the screen with the admin options.
         # He wants to create a new Schema, so he can test out the front end
         # part of the page. But first he needs to create a help url, since the
-        # design requires him to do so. He locates SchemaHelpUrls and clicks
+        # design requires him to do so. He locates SchemaUrls and clicks
         # it.
-        schema_help = self.wait_for_element('model-schemahelpurl', 'class')
+        schema_help = self.wait_for_element('model-schemaurl', 'class')
         schema_help.find_element_by_tag_name('a').click()
 
         # He will add a simple help url
@@ -114,7 +114,7 @@ class SuperUserTest(ToolKitMixin, StaticLiveServerTestCase):
         schema_help_helptext = self.wait_for_element('help_text','name')
         schema_help_helptext.send_keys('link to www.google.dk')
 
-        # He saves the new SchemaHelpUrl 
+        # He saves the new SchemaUrl 
         self.wait_for_element('_save', 'name').click()
 
         # He navigates back to the overview.
@@ -234,7 +234,7 @@ class NewVisitorTest(ToolKitMixin, StaticLiveServerTestCase):
         self.user = User.objects.create_user(
             'test', 'test@test.com', 'testpw'
             )
-        url = SchemaHelpUrl.objects.create(
+        url = SchemaUrl.objects.create(
             url='1234', name='1234', help_text='1234'
             )
         self.schema = Schema.objects.create(

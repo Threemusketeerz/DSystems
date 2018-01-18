@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from . import views
 from .forms import SchemaResponseForm, ResponseUpdateForm
-from .models import Schema, SchemaColumn, SchemaResponse, SchemaHelpUrl
+from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl
 from .exceptions import SchemaIsLockedError
 
 import unittest
@@ -130,7 +130,7 @@ class FormTests(TestCase):
             text='test qb',
             is_bool=True
             )
-        self.url = SchemaHelpUrl.objects.create(
+        self.url = SchemaUrl.objects.create(
             schema=self.schema,
             name='link', url='10.0.0.180:8000',
             )
