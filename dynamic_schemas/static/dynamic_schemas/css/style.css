@@ -1,5 +1,6 @@
 body {
     background-color: rgb(229, 240, 255)!important;
+    overflow-y: scroll;
 }
 
 .dropdown-toggle:hover {
