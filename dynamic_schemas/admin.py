@@ -41,19 +41,19 @@ class SchemaAdmin(admin.ModelAdmin):
     form = SchemaAdminForm
     save_on_top = True
     list_display = (
-        'name', 'is_active', 'is_locked', 'date_created',
+        'name', 'is_active', 'is_locked', 'is_obsolete', 'date_created',
         'date_modified', 'date_obsolete',
         )
 
     list_filter = (
-        'is_active', 'is_locked', 'date_created',
-        'date_modified', 'date_obsolete',
+        'is_active', 'is_locked', 'is_obsolete', 'date_created',
+        'date_modified', 'date_obsolete', 
         )
 
     fieldsets = [
         (None, {'fields': [
                 'name', 'help_field', 'is_active', 'is_locked', 
-                'is_obsolete',
+                'is_obsolete', 'has_ancestor',
                 ]
             }
         ),

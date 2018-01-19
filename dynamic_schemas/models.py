@@ -53,6 +53,14 @@ class Schema(models.Model):
         'vil en udgået dato blive sat igennem den her afkrydsning',
         )
 
+    has_ancestor = models.BooleanField(
+        default=False,
+        verbose_name='Har forfædre',
+        help_text="""Hvis tabellen har en ældre version af sig, for at fortælle
+        systemet at den skal lave et link der referere tilbage til det skema,
+        skal denne være afkrydset""",
+        )
+
     date_created = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Lavet den',
@@ -163,12 +171,15 @@ class SchemaHistoryManager(models.Manager):
 
 class SchemaHistoryLog(models.Model):
     history = SchemaHistoryManager()
+
+    # I have turned these two around, for some reason the logic is opposite.
+    # Don't know why yet.
     obsolete_schema = models.ForeignKey(
-        Schema, related_name='obsolete', on_delete=models.DO_NOTHING,
+        Schema, related_name='new', on_delete=models.DO_NOTHING,
         blank=True, null=True, limit_choices_to={'is_obsolete': True},
         )
     new_schema = models.ForeignKey(
-        Schema, related_name='new', on_delete=models.DO_NOTHING,
+        Schema, related_name='obsolete', on_delete=models.DO_NOTHING,
         blank=True, null=True, limit_choices_to={'is_obsolete': False},
         )
     pub_date = models.DateTimeField(auto_now_add=True)
