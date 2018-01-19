@@ -44,7 +44,8 @@
                         <a href="http://10.22.1.15/hjemmeside/hjemmeside.html"> Udgået skema system </a>
                     </li>
                     {% if schema %}
-                    {% if schema.is_active %}
+                    {% block navextras %}
+                    {% endblock %}
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown"
                                                    aria-expanded="true">
@@ -64,7 +65,6 @@
                             {% endif %}
                         </ul>
                     </li>
-                    {% endif %}
                     {% endif %}
                     <li>
                         <a {% if request.user.is_superuser %}href="{% url 'admin:index' %}"{% endif %}>

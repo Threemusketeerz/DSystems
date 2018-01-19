@@ -27,13 +27,12 @@ class SchemaIndexView(LoginRequiredMixin, ListView):
 @login_required
 def form_view(request, pk):
     schema = Schema.objects.get(pk=pk)
-    help_urls = schema.help_field.all()
+    urls = schema.help_field.all()
 
     if request.method == 'POST':
         form = SchemaResponseForm(schema, request.POST)
 
         if form.is_valid():
-
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
@@ -47,7 +46,7 @@ def form_view(request, pk):
         {
         'form': form,
         'schema': schema,
-        'help_urls': help_urls,
+        'help_urls': urls,
         })
 
 
@@ -75,9 +74,8 @@ def form_update_view(request, pk, r_pk):
         form = ResponseUpdateForm(instance, pk, request.POST or None)
         if form.is_valid():
             form.update()
-
         return redirect(reverse('dynamic_schemas:schema_view',
-                                kwargs={'pk': pk}))
+                                        kwargs={'pk': pk}))
         
     return render(request, f'dynamic_schemas/update-form.html', 
             {'form_update': form,
@@ -165,6 +163,9 @@ class SchemaView(LoginRequiredMixin, APIView):
     def get(self, request, pk):
         schema = Schema.objects.get(pk=pk)
         schema_help_urls = schema.help_field.all()
+        schema_obsolete = schema.obsolete.all()
+        schema_new = schema.new.all()
+        
 
         all_responses = SchemaResponse.objects.filter(schema=schema) 
         self._make_date_readable(all_responses)
@@ -175,7 +176,10 @@ class SchemaView(LoginRequiredMixin, APIView):
                 'all_responses': serializer.data,
                 'pk': pk,
                 'schema': schema,
-                'help_urls': schema_help_urls, }
+                'help_urls': schema_help_urls,
+                'schema_obsolete': schema_obsolete,
+                'schema_new': schema_new,
+                }
 
         # __import__('ipdb').set_trace()
         return Response(data)
