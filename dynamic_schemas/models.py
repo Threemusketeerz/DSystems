@@ -176,3 +176,6 @@ class SchemaHistoryLog(models.Model):
     """ Manager that handles set of objects for OLD_SCHEMA = model.is_obsolete.
         And NEW_SCHEMA != model.is_obsolete
     """
+
+    def __str__(self):
+        return f'{self.obsolete_schema.name} -> {self.new_schema.name}'

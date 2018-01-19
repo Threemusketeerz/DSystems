@@ -62,6 +62,19 @@ class SchemaAdmin(admin.ModelAdmin):
 
     inlines = [QuestionInline]
 
+# class HistoryAdmin(admin.ModelAdmin):
+    # list_display = (
+        # 'obsolete_schema', 'new_schema',
+        # )
+
+    # fieldsets = [
+        # (None, {'fields': [
+            # 'obsolete_schema', 'new_schema',
+            # ]
+
+        # })
+    # ]
+
 admin.site.site_url = '/rengoering/'
 admin.site.site_header = 'Damino Systems'
 
