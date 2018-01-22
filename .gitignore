@@ -11,3 +11,5 @@ htmlcov/
 newdumpsjson/
 manage.py
 geckodriver.log
+dist/
+django_dynamicschemas.egg-info
