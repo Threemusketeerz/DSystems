@@ -1,10 +1,9 @@
 from setuptools import find_packages, setup
 
-from .version import get_version
-
 import os
+import version 
 
-VERSION = get_version()
+VERSION = version.get_version()
 
 setup(
     name='django-dynamicschemas',

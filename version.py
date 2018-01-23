@@ -12,6 +12,5 @@ def get_version():
 
     return cleaned_tag
 
-
 if __name__ == "__main__":
     get_version()
