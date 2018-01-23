@@ -1,5 +1,6 @@
 graft dynamic_schemas
 graft functional_tests
+include version.py
 global-exclude __pycache__
 global-exclude *.pyc
 prune DaminoSystemsv4

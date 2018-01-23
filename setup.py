@@ -1,13 +1,16 @@
 from setuptools import find_packages, setup
 
 import os
-# import version 
+import version 
 
 # VERSION = version.get_version()
 
+# __version__ = '2.2.1'
+__version__ = version.get_version()
+
 setup(
     name='django-dynamicschemas',
-    version='2.2.1',
+    version=__version__,
     packages=find_packages(),
     include_package_data=True,
     license='BSD license',
