@@ -1,9 +1,14 @@
-import os
 from setuptools import find_packages, setup
+
+from .version import get_version()
+
+import os
+
+VERSION = get_version()
 
 setup(
     name='django-dynamicschemas',
-    version='2.2.0',
+    version=VERSION,
     packages=find_packages(),
     include_package_data=True,
     license='BSD license',
