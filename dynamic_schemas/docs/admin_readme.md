@@ -42,17 +42,17 @@ Her vil jeg prøve at forklare så godt som muligt hvordan man ville bruge de fu
 Jeg starter fra start til slut af et skemas levetid.
 
 **Skema kreation**:
-    1. Udfyld Skema felter (du kan lave instruktioner fra denne side) 
-    2. Lav kolonner 
-    3. Sæt skema som aktivt 
-    4. Lav evt. en test indtastning, for at se om tabellen viser det den skal 
-    5. Vent evt. på at tabellen bliver brugt. Hvis kravene er opfyld, lås tabellen. Sæt dig tilbage og drik en kop kaffe.
+1. Udfyld Skema felter (du kan lave instruktioner fra denne side)  
+2. Lav kolonner  
+3. Sæt skema som aktivt  
+4. Lav evt. en test indtastning, for at se om tabellen viser det den skal  
+5. Vent evt. på at tabellen bliver brugt. Hvis kravene er opfyld, lås tabellen. Sæt dig tilbage og drik en kop kaffe.  
 
 **Skema skal skiftes ud med nyt skema**:
-    1. Find det skema i admin panelet der skal skiftes ud. 
-    2. Markér udgået -> tryk på gem
-    3. Sørg for at 'aktiv' boksen er trykket af (vi vil ikke længere have den vist i menuen).
-    4. Gå nu ind i Skema Historik modulet, og lav en ny indtastning.
-    5. Du bliver mødt af to dropdown menuer, den ene indeholder udgåede skemaer og den anden indeholder skemaer der ikke er udgåede. -> Vælg det udgåede skema i den første dropdown, herefter vælg det skema den bliver erstattet med i den anden dropdown. -> tryk på Save.
-    6. Hvis du har lavet den nye skema ifølge Skema Kreation instruktionerne, vil det nye skema blive vist i menuen på front-end og referere tilbage til det gamle skema.
+1. Find det skema i admin panelet der skal skiftes ud.   
+2. Markér udgået -> tryk på gem  
+3. Sørg for at 'aktiv' boksen er trykket af (vi vil ikke længere have den vist i menuen).  
+4. Gå nu ind i Skema Historik modulet, og lav en ny indtastning.  
+5. Du bliver mødt af to dropdown menuer, den ene indeholder udgåede skemaer og den anden indeholder skemaer der ikke er udgåede. -> Vælg det udgåede skema i den første dropdown, herefter vælg det skema den bliver erstattet med i den anden dropdown. -> tryk på Save.  
+6. Hvis du har lavet den nye skema ifølge Skema Kreation instruktionerne, vil det nye skema blive vist i menuen på front-end og referere tilbage til det gamle skema.  
 
