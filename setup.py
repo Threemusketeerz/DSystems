@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-from .version import get_version()
+from .version import get_version
 
 import os
 
