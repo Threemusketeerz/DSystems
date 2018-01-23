@@ -24,7 +24,10 @@
     {% endfor %}
     {% endif %}
 {% endblock %}
+
 {% block content %}
+{% load tz %}
+{% localtime on %}
 {% if schema.is_obsolete %}
 <pre class="bg-danger"> 
     <h3>
@@ -37,6 +40,8 @@
     </h3>
 </pre>
 {% endif %}
+{% endlocaltime %}
+
 {% if all_responses %}
     <div class="dataTables-container">
         <table id="dataTable" class="display table table-striped" cellspacing="0" width="100%">
@@ -105,11 +110,9 @@
                 {% endfor %}
         </table>
     </div>
-    {% elif not schema.is_active %}
-    <h1> Skema inaktivt! Kontakt admin </h1>
     {% else %}
     <h1> SKEMA ER TOMT! Tryk under for at lave første indtasting! </h1>
      <a class="btn btn-primary" href="{% url 'dynamic_schemas:create_form' pk=pk %}">Ny Indtastning</a>
-{% endif %}
+    {% endif %}
 {% endblock %}
 

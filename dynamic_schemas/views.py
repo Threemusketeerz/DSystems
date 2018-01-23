@@ -138,8 +138,8 @@ class SchemaView(LoginRequiredMixin, APIView):
 		
         for instance in instances:
             inst_as_cet = self._make_date_tz(
-                    instance=instance, 
-                    tz='Europe/Copenhagen'
+                    instance=instance
+                    # tz='Europe/Copenhagen'
                     )
             instance.pub_date = inst_as_cet \
                     .strftime('%d-%m/%Y %H:%M:%S')

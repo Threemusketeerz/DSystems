@@ -19,6 +19,10 @@ class SchemaUrl(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Instruktion'
+        verbose_name_plural = 'Instruktioner'
+
 
 class Schema(models.Model):
 
@@ -78,6 +82,10 @@ class Schema(models.Model):
         verbose_name='Udgået den',
         )
 
+    class Meta:
+        verbose_name = 'Skema'
+        verbose_name_plural = 'Skemaer'
+
     def __str__(self):
         return self.name
 
@@ -90,6 +98,7 @@ class Schema(models.Model):
             self.date_obsolete = None
 
         super().save(*args, **kwargs)
+
 
 
 class SchemaColumn(models.Model):
@@ -110,6 +119,7 @@ class SchemaColumn(models.Model):
 
     class Meta:
         unique_together = ('schema', 'text',)
+        verbose_name = 'Kolonner'
 
     def __str__(self):
         return self.text
@@ -187,6 +197,10 @@ class SchemaHistoryLog(models.Model):
     """ Manager that handles set of objects for OLD_SCHEMA = model.is_obsolete.
         And NEW_SCHEMA != model.is_obsolete
     """
+
+    class Meta:
+        verbose_name = 'Skema Historik'
+        verbose_name_plural = 'Skema Historik'
 
     def __str__(self):
         return f'{self.obsolete_schema.name} -> {self.new_schema.name}'
