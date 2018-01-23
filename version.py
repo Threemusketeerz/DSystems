@@ -2,7 +2,7 @@ import subprocess as subp
 import re
 
 def get_version():
-    command = 'git tag | tail -1'
+    command = 'git describe --abbrev=0 --tags'
     tag = subp.run(command, shell=True, stdout=subp.PIPE)
     tag = tag.stdout.decode('utf-8')
     regex = re.compile('[a-z\s]')
