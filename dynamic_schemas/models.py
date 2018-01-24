@@ -187,10 +187,12 @@ class SchemaHistoryLog(models.Model):
     obsolete_schema = models.ForeignKey(
         Schema, related_name='new', on_delete=models.DO_NOTHING,
         blank=True, null=True, limit_choices_to={'is_obsolete': True},
+        verbose_name='Udgåede skemaer',
         )
     new_schema = models.ForeignKey(
         Schema, related_name='obsolete', on_delete=models.DO_NOTHING,
         blank=True, null=True, limit_choices_to={'is_obsolete': False},
+        verbose_name='Ikke udgåede skemaer',
         )
     pub_date = models.DateTimeField(auto_now_add=True)
 
