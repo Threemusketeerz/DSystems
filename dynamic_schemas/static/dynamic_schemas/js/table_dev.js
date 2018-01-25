@@ -4,13 +4,16 @@
  * file and function
  */
 var start = performance.now();
+var columnsFileName = "columns/";
+//edit .getJSON to fit needs.
+columns = $.getJSON(columnsFileName, function(data){ console.log(data); return data; });
+//console.log(typeof columnsString);
+//columns = JSON.stringify(columns);
+//console.log(columns);
 $(document).ready(function() {
     //var columnSettings;
     //var tableDate;
     //var dataFileName= "responses/";
-    //var columnsFileName = "columns/";
-    //edit .getJSON to fit needs.
-    //columnsFile = $.getJSON(columnsFileName, function(data){ console.log(data); return data; });
     
     //dataFile = $.getJSON(dataFileName, function(data){ console.log(data); return data.responseJSON; });
 
@@ -19,15 +22,17 @@ $(document).ready(function() {
     // What would happen without is an error, where it didn't fetch either
     // columns or data before rendering the table.
     //$('#dataTable').DataTable();
-    //$.when().done(function(){
+    $.when(columns).done(function(columns){
         console.log(performance.now() + ' TableCreation started');
+        console.log(JSON.parse(columns))
 
 
-        //$(".field input").addClass("form-control") 
+    //$(".field input").addClass("form-control") 
 
         var table = $("#dataTable").DataTable({
             "processing": true,
             "serverSide": true,
+            "pageLength": 25,
             "ajax": { 
                 "url": "responses/",
                 "data": function(d){
@@ -49,11 +54,17 @@ $(document).ready(function() {
                         //console.log(JSON.stringify(d));
                         //console.log(eval('('+d+')'));
                         d = eval('('+d+')');
+
+                        // This might be a little excessive
                         d = JSON.stringify(d);
                         d = JSON.parse(d);
+
+                        // Replace the data with the jsonified data.
                         data.data[i].qa_set = d;
                     }
                     console.log('Efter json parse: ', data.data);
+
+                    // !!!! VERY IMPORTANT TO DO data.data !!!!
                     return data.data;
                 },
                 complete: function(jqXHR, textStatus){
@@ -61,32 +72,8 @@ $(document).ready(function() {
                     console.log(textStatus);
                 },
             },
-            "columns": null,
-            "columns": [
-                {"data": "id", "name": "ID"},
-                {"data": "instruction", "name": "Instruktion"},
-                {"data": "pub_date"},
-                //{"data": "qa_set"},
-                {"data": "qa_set.TestColumn0"},
-                {"data": "qa_set.TestColumn1"},
-                {"data": "qa_set.TestColumn2"},
-                {"data": "qa_set.TestColumn3"},
-                {"data": "qa_set.TestColumn4"},
-                //{"data": "schema"},
-                //{"data": "user"},
-            ],
-            //"columns": [
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-                //null,
-            //],
+            "columns": JSON.parse(columns),
+
         })
         //table.on( 'select', function ( e, dt, type, indexes ) {
             //console.log(type, indexes);
@@ -102,5 +89,5 @@ $(document).ready(function() {
         ////var end = performance.now();
 
         ////alert("Took " + (end - start) + " ms");
-    //});
+    });
 });

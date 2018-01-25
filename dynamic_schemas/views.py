@@ -12,6 +12,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from .models import Schema, SchemaColumn, SchemaResponse, SchemaUrl
 from .forms import SchemaResponseForm, ResponseUpdateForm
 from .serializers import SchemaResponseSerializer
+from .prepare_data import getcolumns
 
 import pytz
 
@@ -93,14 +94,39 @@ class ResponseList(APIView):
     """
 
     def get(self, request, pk, format=None, *args):
-        start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 30))
+        req = request.GET
+        # Amount of data to fetch each pull
+        start = int(req.get('start', 0))
+        length = int(req.get('length', 30))
+        end = start + length;
+
+        draw = req.get('draw')
+
+        # TODO Gonna require some thinking. Also need to user recordsFiltered.
+        # search = req.get('search[value]')
 
         schema = Schema.objects.get(pk=pk)
-        responses = SchemaResponse.objects.filter(schema=schema)[start:length]
+        responses_count = SchemaResponse.objects.filter(schema=schema).count()
+        responses = SchemaResponse.objects.filter(schema=schema)[start:end]
         serializer = SchemaResponseSerializer(responses, many=True)
+
+        return_data = {
+            'draw': int(draw),
+            'recordsTotal': responses_count,
+            'recordsFiltered': responses_count,
+            'data': serializer.data,
+            }
         # __import__('ipdb').set_trace()
-        return Response(serializer.data)
+        return Response(return_data)
+
+class ResponseColumns(APIView):
+    def get(self, request, pk, format=None, *args):
+        req = request.GET
+        schema = Schema.objects.get(pk=pk)
+        sr = SchemaResponse.objects.filter(schema=schema).first()
+        columns = getcolumns(sr).getvalue()
+
+        return Response(columns)
 
 
 
@@ -115,7 +141,7 @@ class SchemaView(LoginRequiredMixin, APIView):
     """
 
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'dynamic_schemas/main.html'
+    template_name = 'dynamic_schemas/table_dev.html'
 
     def _make_date_tz(self, instance=None, tz=None):
         """ Takes an instance, and sets its timezone. 

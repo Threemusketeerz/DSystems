@@ -15,5 +15,7 @@ urlpatterns = [
         views.form_update_view, name='update_response'),
     url(r'^(?P<pk>[0-9]+)/responses/$', views.ResponseList.as_view(),
         name='list_responses'),
+    url(r'^(?P<pk>[0-9]+)/columns/$', views.ResponseColumns.as_view(),
+        name='response_columns'),
 ]
 
