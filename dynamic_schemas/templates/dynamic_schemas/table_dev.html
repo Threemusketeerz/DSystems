@@ -1,0 +1,55 @@
+{% extends 'dynamic_schemas/base.html' %}
+{% load static %}
+{% load dynamic_schema_extras %}
+{% block extraheads %}
+        <link rel="stylesheet" type="text/css" href="{% static 'dynamic_schemas/dependencies/dt/datatables.min.css' %}">
+
+        <script type="text/javascript" 
+                src="{% static 'dynamic_schemas/dependencies/dt/datatables.js' %}"></script>
+        <script type="text/javascript" 
+                src="{% static 'dynamic_schemas/js/table_dev.js' %}"></script>
+{% endblock %}
+
+{% block navextras %}
+
+    {% if schema.has_ancestor %}
+    {# This might have to be a dropdownlist #}
+    {% for s in schema_obsolete %}
+    <li class="obs-schema">
+        <a href="{% url 'dynamic_schemas:schema_view' s.obsolete_schema.id %}">
+            <span class='glyphicon glyphicon-warning-sign'></span>
+            Udgået skema: {{ s.obsolete_schema }}
+        </a>
+    </li>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% load tz %}
+{% localtime on %}
+{% if schema.is_obsolete %}
+<pre class="bg-danger"> 
+    <h3>
+        Denne tabel er udgået dato: {{ schema.date_obsolete }}, 
+        gå tilbage til menuen for at finde din tabel.
+        Hvis den ikke er herunder eller i menuen, kontakt admin!
+        {% for s in schema_new %}
+        <a href="{% url 'dynamic_schemas:schema_view' s.new_schema.id %}">{{ s.new_schema }}</a>
+        {% endfor %}
+    </h3>
+</pre>
+{% endif %}
+{% endlocaltime %}
+
+{% if all_responses %}
+    <div class="dataTables-container">
+        <table id="dataTable" class="display table table-striped" width="100%">
+        </table>
+    </div>
+{% else %}
+    <h1> SKEMA ER TOMT! Tryk under for at lave første indtasting! </h1>
+     <a class="btn btn-primary" href="{% url 'dynamic_schemas:create_form' pk=pk %}">Ny Indtastning</a>
+{% endif %}
+{% endblock %}
+
