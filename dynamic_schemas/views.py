@@ -84,7 +84,7 @@ def form_update_view(request, pk, r_pk):
 
 
 """ API Views """
-class ResponseList(LoginRequiredMixin, APIView):
+class ResponseList(APIView):
 
     """
     Lists responses according to schema.
@@ -92,11 +92,16 @@ class ResponseList(LoginRequiredMixin, APIView):
     tables.
     """
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk, format=None, *args):
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 30))
+
         schema = Schema.objects.get(pk=pk)
-        responses = SchemaResponse.objects.filter(schema=schema)
+        responses = SchemaResponse.objects.filter(schema=schema)[start:length]
         serializer = SchemaResponseSerializer(responses, many=True)
+        # __import__('ipdb').set_trace()
         return Response(serializer.data)
+
 
 
 class SchemaView(LoginRequiredMixin, APIView):
