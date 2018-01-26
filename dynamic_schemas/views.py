@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, reverse
 from django.views.generic import ListView 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -92,57 +93,6 @@ class ResponseList(APIView):
     Purely for APIView for now. Not being used in the actual rendering af the
     tables.
     """
-
-    def get(self, request, pk, format=None, *args):
-        req = request.GET
-        # Amount of data to fetch each pull
-        start = int(req.get('start', 0))
-        length = int(req.get('length', 30))
-        end = start + length;
-
-        draw = req.get('draw')
-
-        # TODO Gonna require some thinking. Also need to user recordsFiltered.
-        # search = req.get('search[value]')
-
-        schema = Schema.objects.get(pk=pk)
-        responses_count = SchemaResponse.objects.filter(schema=schema).count()
-        responses = SchemaResponse.objects.filter(schema=schema)[start:end]
-        serializer = SchemaResponseSerializer(responses, many=True)
-
-        return_data = {
-            'draw': int(draw),
-            'recordsTotal': responses_count,
-            'recordsFiltered': responses_count,
-            'data': serializer.data,
-            }
-        # __import__('ipdb').set_trace()
-        return Response(return_data)
-
-class ResponseColumns(APIView):
-    def get(self, request, pk, format=None, *args):
-        req = request.GET
-        schema = Schema.objects.get(pk=pk)
-        sr = SchemaResponse.objects.filter(schema=schema).first()
-        columns = getcolumns(sr).getvalue()
-
-        return Response(columns)
-
-
-
-class SchemaView(LoginRequiredMixin, APIView):
-
-    """
-    Fetches the FIRST object from ResponseList. Makes it availabe for
-    as a template for the table in main.html
-
-    Excludes schema.id, and the placeholder qa_set in the template.
-
-    """
-
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'dynamic_schemas/table_dev.html'
-
     def _make_date_tz(self, instance=None, tz=None):
         """ Takes an instance, and sets its timezone. 
         
@@ -177,6 +127,90 @@ class SchemaView(LoginRequiredMixin, APIView):
 
         return instances
 
+    def _make_user_readable(self, serializer):
+        """ Helper to return the correct attributes to the front-end
+        """
+        for data in serializer.data:
+            # import ipdb; ipdb.set_trace()
+            user = data['user']
+            instance = User.objects.get(id=user)
+
+            user = instance.first_name + instance.last_name
+
+            if instance.first_name == '':
+                user = instance.username
+
+            data['user'] = user
+            # __import__('ipdb').set_trace()
+            # import ipdb; ipdb.set_trace()
+
+        return serializer 
+
+    def _make_intruction_links_readable(self, serializer):
+        for data in serializer.data:
+            instr = data['instruction']
+            instance = SchemaUrl.objects.get(id=instr)
+            
+            instr = '<a href="'+ instance.url +'">'+ instance.name +'</a>'
+
+            data['instruction'] = instr
+
+        return serializer
+
+    def get(self, request, pk, format=None, *args):
+        req = request.GET
+        # Amount of data to fetch each pull
+        start = int(req.get('start', 0))
+        length = int(req.get('length', 30))
+        end = start + length;
+
+        draw = req.get('draw')
+
+        # TODO Gonna require some thinking. Also need to user recordsFiltered.
+        # search = req.get('search[value]')
+
+        schema = Schema.objects.get(pk=pk)
+        responses_count = SchemaResponse.objects.filter(schema=schema).count()
+        responses = SchemaResponse.objects.filter(schema=schema)[start:end]
+        responses = self._make_date_readable(responses)
+
+        serializer = SchemaResponseSerializer(responses, many=True)
+        serializer = self._make_user_readable(serializer)
+        serializer = self._make_intruction_links_readable(serializer)
+
+        return_data = {
+            'draw': int(draw),
+            'recordsTotal': responses_count,
+            'recordsFiltered': responses_count,
+            'data': serializer.data,
+            }
+        # __import__('ipdb').set_trace()
+        return Response(return_data)
+
+class ResponseColumns(APIView):
+    def get(self, request, pk, format=None, *args):
+        req = request.GET
+        schema = Schema.objects.get(pk=pk)
+        sr = SchemaResponse.objects.filter(schema=schema).first()
+        columns = getcolumns(sr).getvalue()
+
+        return Response(columns)
+
+
+
+class SchemaView(LoginRequiredMixin, APIView):
+
+    """
+    Fetches the FIRST object from ResponseList. Makes it availabe for
+    as a template for the table in main.html
+
+    Excludes schema.id, and the placeholder qa_set in the template.
+
+    """
+
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'dynamic_schemas/table_dev.html'
+
 
     def get_object(self, pk):
         try:
@@ -199,7 +233,7 @@ class SchemaView(LoginRequiredMixin, APIView):
         
 
         all_responses = SchemaResponse.objects.filter(schema=schema) 
-        self._make_date_readable(all_responses)
+        # self._make_date_readable(all_responses)
 
         serializer = SchemaResponseSerializer(all_responses, many=True)
 
