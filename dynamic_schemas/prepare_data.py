@@ -13,7 +13,7 @@ def getcolumns(schemaresponse):
     # We want id first, hopefully we can hide it though -> then append the rest
     # on it.
     column_set = [
-        {"data": "id", "title": "ID"},
+        {"data": "id", "title": "ID", "visible": False},
         ]
     
     for c, d in schemaresponse.__dict__.items():
@@ -22,10 +22,12 @@ def getcolumns(schemaresponse):
                 column = {}
                 column["data"] = c + '.' + x
                 column["title"] = x 
+                column["orderable"] = False
                 column_set.append(column)
                 # import ipdb; ipdb.set_trace()
             # print(d)
 
+    # This seems suspiciously much like functionable parameters.
     column_set.append(
         {"data": "instruction", "title": "Instruktion"}
         )

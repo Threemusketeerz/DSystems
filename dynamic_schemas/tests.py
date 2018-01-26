@@ -310,26 +310,27 @@ class ViewTests(TestCase):
         self.assertNotEqual(self.c.get(url).status_code, 404)
 
     
-    def test_SchemaView_make_date_readable_not_equal_unreadable(self):
-        # TODO Create global time format. In settings preferably.
-        schema = Schema.objects.create(name='test')
-        schema_q = SchemaColumn.objects.create(text='q1', schema=schema)
-        schema_r = SchemaResponse.objects.create(schema=schema, 
-                qa_set={'q1': 'blabla'})
-        url = reverse('dynamic_schemas:schema_view', kwargs={'pk': 1})
+    # Disabled for now.
+    # def test_SchemaView_make_date_readable_not_equal_unreadable(self):
+        # # TODO Create global time format. In settings preferably.
+        # schema = Schema.objects.create(name='test')
+        # schema_q = SchemaColumn.objects.create(text='q1', schema=schema)
+        # schema_r = SchemaResponse.objects.create(schema=schema, 
+                # qa_set={'q1': 'blabla'})
+        # url = reverse('dynamic_schemas:schema_view', kwargs={'pk': 1})
 
-        request = self.factory.get(url)
-        request.user = self.user
-        # __import__('ipdb').set_trace()
-        response = views.SchemaView.as_view()(request, 1)
+        # request = self.factory.get(url)
+        # request.user = self.user
+        # # __import__('ipdb').set_trace()
+        # response = views.SchemaView.as_view()(request, 1)
 
-        # Fetch date after .make_date_readable.
-        readable_date = response.data.pop('all_responses')[0]['pub_date']
+        # # Fetch date after .make_date_readable.
+        # readable_date = response.data.pop('all_responses')[0]['pub_date']
 
-        # Date directly from db, used for table creation.
-        unreadable_date = response.data.pop('single_response')['pub_date']
+        # # Date directly from db, used for table creation.
+        # unreadable_date = response.data.pop('single_response')['pub_date']
 
-        self.assertNotEqual(readable_date, unreadable_date)
+        # self.assertNotEqual(readable_date, unreadable_date)
 
 
 class SchemaHistoryLogTest(TestCase):

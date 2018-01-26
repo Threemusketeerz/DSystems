@@ -86,13 +86,8 @@ def form_update_view(request, pk, r_pk):
 
 
 """ API Views """
-class ResponseList(APIView):
 
-    """
-    Lists responses according to schema.
-    Purely for APIView for now. Not being used in the actual rendering af the
-    tables.
-    """
+class MakeDataPrettyMixin:
     def _make_date_tz(self, instance=None, tz=None):
         """ Takes an instance, and sets its timezone. 
         
@@ -157,12 +152,36 @@ class ResponseList(APIView):
 
         return serializer
 
+class ResponseList(MakeDataPrettyMixin, APIView):
+
+    """
+    Lists responses according to schema.
+    Purely for APIView for now. Not being used in the actual rendering af the
+    tables.
+    """
+    default_order = [
+        ('desc', '-'),
+        ('asc', ''),
+        ]
+
+    def get_orderprefix(self, order):
+        for tup in self.default_order:
+            if order in tup:
+                return tup[1]
+    
     def get(self, request, pk, format=None, *args):
         req = request.GET
         # Amount of data to fetch each pull
         start = int(req.get('start', 0))
         length = int(req.get('length', 30))
         end = start + length;
+
+        order = req.get('order[0][dir]')
+        order_column = req.get('order[0][column]')
+        order_by_pre = self.get_orderprefix(order)
+        order_column_name = req.get('columns['+order_column+'][data]')
+        # __import__('ipdb').set_trace()
+        order_str = order_by_pre + order_column_name
 
         draw = req.get('draw')
 
@@ -171,7 +190,11 @@ class ResponseList(APIView):
 
         schema = Schema.objects.get(pk=pk)
         responses_count = SchemaResponse.objects.filter(schema=schema).count()
-        responses = SchemaResponse.objects.filter(schema=schema)[start:end]
+        responses = SchemaResponse \
+            .objects \
+            .filter(schema=schema) \
+            .order_by(order_str)[start:end]
+        # __import__('ipdb').set_trace()
         responses = self._make_date_readable(responses)
 
         serializer = SchemaResponseSerializer(responses, many=True)
