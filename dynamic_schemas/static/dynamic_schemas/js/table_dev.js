@@ -32,7 +32,7 @@ $(document).ready(function() {
         var table = $("#dataTable").DataTable({
             "processing": true,
             "serverSide": true,
-            "pageLength": 10,
+            "pageLength": 25,
             "ajax": { 
                 "url": "responses/",
                 "data": function(d){
@@ -102,7 +102,7 @@ $(document).ready(function() {
             "select": {
                 "style": "single" 
             }, 
-            "dom": "Bfrltip",
+            "dom": "Brltip",
             "buttons": [
                 {
                 "text": "<- Tilbage",
